@@ -1,5 +1,13 @@
 FROM python:3.11-slim-bookworm
 
+# Install system dependencies required for mysqlclient
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
+    gcc \
+    build-essential \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install uv (Python package manager from Astral)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
