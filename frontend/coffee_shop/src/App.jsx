@@ -10,6 +10,7 @@ function App() {
   return (
     <div className="text-base sm:text-lg text-white min-h-screen">
       <Navigation></Navigation>
+      <Footer></Footer>
     </div>
   )
 }
