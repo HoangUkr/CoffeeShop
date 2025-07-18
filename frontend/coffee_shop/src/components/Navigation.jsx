@@ -172,7 +172,7 @@ const Navbar = () => {
           <Disclosure.Panel className="sm:hidden bg-[#4B2E2E] text-white">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {/* Navigation items */}
-              {[...navigation, { name: "Menu", href: "#" }].map((item) => (
+              {navigation.map((item) => (
                 <Disclosure.Button
                   key={item.name}
                   as="a"
