@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import ProductSection from "./components/ProductSection";
 import TeamSection from "./components/TeamSection";
+import ContactSection from "./components/ContactSection";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Hero></Hero>
         <ProductSection></ProductSection>
         <TeamSection></TeamSection>
+        <ContactSection></ContactSection>
       </main>
       <Footer></Footer>
     </div>
