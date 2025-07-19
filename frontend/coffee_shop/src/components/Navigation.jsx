@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+/* Impoer Headless UI */
 import { Disclosure, Menu } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -8,8 +10,9 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 
+// Navigation items
 const navigation = [
-  { name: "Home", href: "#", current: true },
+  { name: "Home", href: "/", current: true },
   // { name: "About", href: "#", current: false },
   // { name: "Contact", href: "#", current: false },
 ];
@@ -33,7 +36,7 @@ const Navbar = () => {
                 <h1 className="text-xl font-bold">Sweet Coffee</h1>
                 <div className="hidden sm:flex space-x-4">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
                       href={item.href}
                       className={classNames(
@@ -45,7 +48,7 @@ const Navbar = () => {
                       aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
 
                   {/* Menu Dropdown */}

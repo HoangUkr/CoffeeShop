@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 // import '../assets/css/global.css';
 import Slider from "react-slick";
 
@@ -20,7 +21,11 @@ const Hero = () => {
     slidesToScroll: 1,
   };
 
+  // State to manage active button
   const [activeButton, setActiveButton] = useState(null);
+
+  // Navigation hook
+  const navigate = useNavigate();
 
   return (
     <section className="pt-20 sm:pt-24 bg-[#4B2E2E] w-full text-white">
@@ -48,15 +53,23 @@ const Hero = () => {
                 <button
                   aria-label="Reserve Table"
                   className={`bg-yellow-500 hover:bg-yellow-600 text-[#4B2E2E] font-semibold px-6 py-2 rounded-full ${
-                  activeButton === "reserve" ? "border-2 border-white" : "border-2 border-yellow-500" }`}
-                  onClick={() => setActiveButton("reserve")}
+                    activeButton === "reserve"
+                      ? "border-2 border-white"
+                      : "border-2 border-yellow-500"
+                  }`}
+                  onClick={() => {
+                    setActiveButton("reserve");
+                    navigate("/reserve-table");
+                  }}
                 >
                   Reserve Table
                 </button>
                 <button
                   aria-label="Order Products"
                   className={`bg-white hover:bg-gray-200 text-[#4B2E2E] font-semibold px-6 py-2 rounded-full ${
-                    activeButton === "order" ? "border-2 border-yellow-500" : "border-2 border-white"
+                    activeButton === "order"
+                      ? "border-2 border-yellow-500"
+                      : "border-2 border-white"
                   }`}
                   onClick={() => setActiveButton("order")}
                 >
