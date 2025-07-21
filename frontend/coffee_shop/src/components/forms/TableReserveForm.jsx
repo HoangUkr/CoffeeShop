@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import validation from "../../utils/validation";
 
 const TableReserveForm = () => {
   //   debugger;
@@ -18,7 +19,12 @@ const TableReserveForm = () => {
 
   // Handle form submission
   const handleSubmit = (event) => {
+    debugger;
     event.preventDefault();
+    if(!validation.validateEmail(event.target.email.value) || !validation.validatePhoneNumber(event.target.phone.value) || !validation.validateDate(date)){
+        alert("Please fill in the form correctly.");
+        return;
+    }
     alert("Reservation submitted!");
   };
   return (
@@ -42,7 +48,7 @@ const TableReserveForm = () => {
             type="text"
             id="name"
             required
-            className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 bg-white text-gray-900 bg-white"
+            className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 bg-white"
           />
         </div>
 

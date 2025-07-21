@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 /* Pages */
 import Home from "./pages/Home";  
 import ReserveTable from "./pages/ReserveTable";
+import CartPage from "./pages/CartPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element= {<Home></Home>}></Route>
           <Route path="/reserve-table" element= {<ReserveTable></ReserveTable>}></Route>
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </main>
       <Footer></Footer>
