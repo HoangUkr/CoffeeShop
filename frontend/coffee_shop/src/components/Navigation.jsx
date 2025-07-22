@@ -12,7 +12,8 @@ import { UserCircleIcon } from "@heroicons/react/24/solid";
 
 // Navigation items
 const navigation = [
-  { name: "Home", href: "/", current: true },
+  // Need to fix the href
+  { name: "Home", href: "", current: true },
   // { name: "About", href: "#", current: false },
   // { name: "Contact", href: "#", current: false },
 ];

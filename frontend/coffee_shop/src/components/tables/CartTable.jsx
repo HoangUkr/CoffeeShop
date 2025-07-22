@@ -21,14 +21,14 @@ const CartTable = ({ items, updateQuantity, removeItem }) => {
             <td className="px-4 py-3 flex justify-center items-center gap-2">
               <button
                 onClick={() => updateQuantity(item.id, -1)}
-                className="bg-gray-200 hover:bg-gray-300 px-2 rounded"
+                className="text-gray-900 bg-gray-200 hover:bg-gray-300 px-2 rounded"
               >
                 −
               </button>
               <span className="text-gray-900 bg-white">{item.quantity}</span>
               <button
                 onClick={() => updateQuantity(item.id, 1)}
-                className="bg-gray-200 hover:bg-gray-300 px-2 rounded"
+                className="text-gray-900 bg-gray-200 hover:bg-gray-300 px-2 rounded"
               >
                 +
               </button>
