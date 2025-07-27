@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import ReserveTable from "./pages/ReserveTable";
 import CartPage from "./pages/CartPage";
 import ProductPage from "./pages/ProductPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
@@ -19,10 +20,11 @@ function App() {
       <Navigation></Navigation>
       <main>
         <Routes>
-          <Route path="/" element= {<Home></Home>}></Route>
-          <Route path="/reserve-table" element= {<ReserveTable></ReserveTable>}></Route>
+          <Route path="/" element= {<Home></Home>} />
+          <Route path="/reserve-table" element= {<ReserveTable></ReserveTable>} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </main>
       <Footer></Footer>
