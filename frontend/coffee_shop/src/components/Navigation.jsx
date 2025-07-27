@@ -34,7 +34,12 @@ const Navbar = () => {
             <div className="flex h-16 justify-between items-center">
               {/* Left: Logo + Navigation */}
               <div className="flex items-center space-x-6">
-                <h1 className="text-xl font-bold">Sweet Coffee</h1>
+                <Link
+                  to="/"
+                  className="text-xl font-bold hover:text-yellow-300"
+                >
+                  Sweet Coffee
+                </Link>
                 <div className="hidden sm:flex space-x-4">
                   {navigation.map((item) => (
                     <Link
@@ -151,6 +156,19 @@ const Navbar = () => {
                           )}
                         >
                           Log out
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active ? "bg-[#3E2626]" : "",
+                            "block px-4 py-2 text-sm text-white"
+                          )}
+                        >
+                          Log in
                         </a>
                       )}
                     </Menu.Item>

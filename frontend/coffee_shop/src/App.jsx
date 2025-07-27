@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";  
 import ReserveTable from "./pages/ReserveTable";
 import CartPage from "./pages/CartPage";
+import ProductPage from "./pages/ProductPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element= {<Home></Home>}></Route>
           <Route path="/reserve-table" element= {<ReserveTable></ReserveTable>}></Route>
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
         </Routes>
       </main>
       <Footer></Footer>
