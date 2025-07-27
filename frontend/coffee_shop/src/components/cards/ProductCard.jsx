@@ -1,5 +1,6 @@
 import React from "react";
 import { Transition } from "@headlessui/react";
+import { useNavigate } from "react-router-dom"; 
 
 /* Icon */
 import {
@@ -9,6 +10,8 @@ import {
 } from "@heroicons/react/24/outline";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate(); // Navigation hook
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 items-center">
       <div className="aspect-w-1 aspect-h-1 w-full bg-gray-100 flex items-center justify-center h-48">
@@ -34,6 +37,7 @@ const ProductCard = ({ product }) => {
             type="button"
             className="p-2 bg-yellow-500 hover:bg-yellow-600 text-[#4B2E2E] rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-400"
             aria-label="View"
+            onClick={() => navigate(`/products/${product.id}`) }
           >
             <EyeIcon className="h-5 w-5" />
           </button>
