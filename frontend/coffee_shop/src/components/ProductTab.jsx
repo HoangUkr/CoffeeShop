@@ -78,9 +78,7 @@ const ProductTab = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Customer Reviews</h3>
             {reviews.length === 0 ? (
-              <p className="text-gray-500">
-                No reviews yet. Be the first to comment!
-              </p>
+              <p className="text-gray-500">No reviews yet. Be the first to comment!</p>
             ) : (
               reviews.map((review) => (
                 <div key={review.id} className="border-b pb-4 mb-4">

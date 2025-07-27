@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 /* Impoer Headless UI */
 import { Disclosure, Menu } from "@headlessui/react";
 import {
@@ -23,6 +23,8 @@ function classNames(...classes) {
 }
 
 const Navbar = () => {
+  // Navigation hook
+  const navigate = useNavigate();
   return (
     <Disclosure
       as="nav"
@@ -105,6 +107,10 @@ const Navbar = () => {
                 <button
                   type="button"
                   className="rounded-full p-2 bg-[#4B2E2E] hover:bg-[#3E2626] focus:ring-2 focus:ring-white focus:outline-none"
+                  onClick={() => {
+                    // Handle cart click
+                    navigate("/cart");
+                  }}
                 >
                   <ShoppingCartIcon
                     className="h-6 w-6 text-white"

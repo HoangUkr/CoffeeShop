@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /* Components */
 import CartTable from "../components/tables/CartTable";
 
 const CartPage = () => {
+  // Navigation hook
+  const navigate = useNavigate();
+
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "Coffee", price: 2.5, quantity: 2 },
     { id: 2, name: "Pastry", price: 3.0, quantity: 1 },
@@ -42,7 +46,12 @@ const CartPage = () => {
           Total: €{total.toFixed(2)}
         </div>
         <div className="flex justify-end mt-4">
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-[#4B2E2E] font-semibold px-6 py-2 rounded-full">
+          <button
+            className="bg-yellow-500 hover:bg-yellow-600 text-[#4B2E2E] font-semibold px-6 py-2 rounded-full"
+            onClick={() => {
+              navigate("/customer-data");
+            }}
+          >
             Confirm Order
           </button>
         </div>

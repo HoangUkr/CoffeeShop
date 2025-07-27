@@ -12,6 +12,8 @@ import ReserveTable from "./pages/ReserveTable";
 import CartPage from "./pages/CartPage";
 import ProductPage from "./pages/ProductPage";
 import LoginPage from "./pages/LoginPage";
+import ProductListPage from "./pages/ProductListPage";
+import OrderPage from "./pages/OrderPage";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/products" element={<ProductListPage />} />
+          <Route path="/customer-data" element={<OrderPage />} />
         </Routes>
       </main>
       <Footer></Footer>

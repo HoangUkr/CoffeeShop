@@ -71,7 +71,10 @@ const Hero = () => {
                       ? "border-2 border-yellow-500"
                       : "border-2 border-white"
                   }`}
-                  onClick={() => setActiveButton("order")}
+                  onClick={() => {
+                    setActiveButton("order"); 
+                    navigate("/products");
+                  }}
                 >
                   Order Products
                 </button>
