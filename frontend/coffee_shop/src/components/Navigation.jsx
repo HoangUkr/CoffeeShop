@@ -162,7 +162,7 @@ const Navbar = () => {
                     <Menu.Item>
                       {({ active }) => (
                         <a
-                          href="#"
+                          href="/login"
                           className={classNames(
                             active ? "bg-[#3E2626]" : "",
                             "block px-4 py-2 text-sm text-white"
