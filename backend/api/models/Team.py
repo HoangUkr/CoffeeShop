@@ -1,5 +1,7 @@
 from django.db import models
-from cloudinary.models import CloudinaryField
+
+# Import custom Cloudinary field
+from api.fields import CustomCloudinaryField
 
 # Create your models here.
 # Model for team
@@ -14,10 +16,11 @@ class Team(models.Model):
         verbose_name='Team Member Name',
         help_text='Enter the role of the team member'
     )
-    image = CloudinaryField(
-        'image', 
-        blank=True, 
-        null=True
+    image = CustomCloudinaryField(
+        folder_name='team',
+        default='team/default.jpg',
+        blank=True,
+        null=True,
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
