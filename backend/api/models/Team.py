@@ -35,19 +35,3 @@ class Team(models.Model):
     
     def __str__(self):
         return f'Name: {self.name}. Role: {self.role}'
-
-# Model for order
-# class Order(models):
-#     pass
-
-# # Model for product
-# class Product(models):
-#     pass
-
-# # Model for item in order (M)
-# class OrderItem():
-#     pass
-
-# # Model for table
-# class Table():
-#     pass
