@@ -4,3 +4,5 @@ from .ImageSerializer import ImageSerializer
 from .ReviewSerializer import ReviewSerializer
 from .ReservationSerializer import ReservationSerializer
 from .ProductSerializer import ProductSerializer
+from .OrderItemSerializer import OrderItemSerializer
+from .OrderSerializer import OrderSerializer

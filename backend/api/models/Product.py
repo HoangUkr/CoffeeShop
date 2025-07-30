@@ -8,6 +8,8 @@ class Product(models.Model):
         help_text='Enter the name of product'
     )
     product_price = models.FloatField(
+        max_digits=10,
+        decimal_places=2,
         verbose_name='Product price',
         help_text='Enter the price of product'
     )
