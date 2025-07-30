@@ -7,7 +7,7 @@ class Product(models.Model):
         verbose_name='Product name',
         help_text='Enter the name of product'
     )
-    product_price = models.FloatField(
+    product_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         verbose_name='Product price',

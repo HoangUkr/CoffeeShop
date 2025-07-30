@@ -3,52 +3,52 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from api.serializers import TeammateSerializer
-from api.models import Teammate
+from api.serializers import CategorySerializer
+from api.models import Category
 
 from django.shortcuts import get_object_or_404
 
-# Create team member
-class TeamCreateView(APIView):
+# Create category view
+class CategoryCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     
     def post(self, request, *args, **kwargs):
-        serializer = TeammateSerializer(data=request.data)
+        serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# Update or partially update team member
-class TeamModifyView(APIView):
+    
+# Update category view
+class CategoryModifyView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     
     def put(self, request, pk, *args, **kwargs):
-        team_member = get_object_or_404(Teammate, pk=pk)
-        serializer = TeammateSerializer(team_member, data=request.data)
+        category = get_object_or_404(Category, pk=pk)
+        serializer = CategorySerializer(category, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def patch(self, request, pk, *args, **kwargs):
-        team_member = get_object_or_404(Teammate, pk=pk)
-        serializer = TeammateSerializer(team_member, data=request.data, partial=True)
+        category = get_object_or_404(Category, pk=pk)
+        serializer = CategorySerializer(category, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Delete team member
-class TeamDeleteView(APIView):
+# Delete category view
+class CategoryDeleteView(APIView):
     def delete(self, request, pk, *args, **kwargs):
-        team_member = get_object_or_404(Teammate, pk=pk)
-        team_member.delete()
+        category = get_object_or_404(Category, pk=pk)
+        category.delete()
         return Response({'detail': 'Successfully deleted.'},status=status.HTTP_204_NO_CONTENT)
-
-# List all team members
-class TeamListView(APIView):
+    
+# List all categories
+class CategoryListView(APIView):
     def get(self, request, *args, **kwargs):
-        team_members = Teammate.objects.all()
-        serializer = TeammateSerializer(team_members, many=True)
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

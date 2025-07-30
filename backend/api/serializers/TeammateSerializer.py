@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Team
+from api.models import Teammate
 
 class TeammateSerializer(serializers.ModelSerializer):
     teammate_name = serializers.CharField(
@@ -9,7 +9,7 @@ class TeammateSerializer(serializers.ModelSerializer):
     )
     
     class Meta:
-        model = Team
+        model = Teammate
         read_only_fields = ('id',)
         fields = '__all__'
         

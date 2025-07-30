@@ -12,7 +12,7 @@ class OrderItem(models.Model):
         on_delete=models.CASCADE,
         related_name='items'
     )
-    quantity = models.PositiveIntegerField(
+    quantity = models.IntegerField(
         verbose_name='Enter the quantity of product in the order',
         help_text='Enter the quantity'
     )

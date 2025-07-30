@@ -21,7 +21,7 @@ class Order(models.Model):
         verbose_name='Order Due Date',
         help_text='Enter due date for Order'
     )
-    order_total_price = models.FloatField(
+    order_total_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         verbose_name='Order Total Price',

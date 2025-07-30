@@ -1,11 +1,11 @@
 from django.contrib import admin
 
 # Models
-from api.models import Team
+from api.models import Teammate
 
 # Register your models here.
-@admin.register(Team)
+@admin.register(Teammate)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'created_at', 'updated_at')
-    search_fields = ('name', 'role')
-    list_filter = ('role',)
+    list_display = ('id', 'teammate_name', 'teammate_role', 'created_at', 'updated_at')
+    search_fields = ('teammate_name', 'teammate_role')
+    list_filter = ('teammate_role',)

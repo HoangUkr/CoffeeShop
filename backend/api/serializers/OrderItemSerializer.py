@@ -10,7 +10,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         queryset=Product.objects.all(),
         required = True
     )
-    quantity = serializers.PositiveIntegerField(
+    quantity = serializers.IntegerField(
         required=True
     )
     class Meta:

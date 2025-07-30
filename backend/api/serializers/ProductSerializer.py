@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models import Product, Category
+from api.serializers import ImageSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(
@@ -16,12 +17,14 @@ class ProductSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(),
         required=True
     )
+    # Product with image
+    images = ImageSerializer(many=True, read_only=True)
     # category_id = serializers.IntegerField(source='category.id', read_only=True)
     class Meta:
         model = Product
         read_only_fields = [
             'id',
-            'category',
+            # 'category',
             'product_like_count',
             'created_at',
             'updated_at'
@@ -32,6 +35,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'product_price',
             'product_like_count',
             'category',
+            'images',
             'created_at',
             'updated_at'
         ]

@@ -23,7 +23,7 @@ class ReservationSerializer(serializers.ModelSerializer):
         required=True,
         help_text="Reservation Date.",
     )
-    customer_message = serializers.TextField(
+    customer_message = serializers.CharField(
         required=True,
         help_text="The customer message",
     )

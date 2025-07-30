@@ -8,7 +8,7 @@ class OrderSerializer(serializers.ModelSerializer):
         help_text="The due date of order.",
         required=True
     )
-    order_total_price = serializers.FloatField(
+    order_total_price = serializers.DecimalField(
         max_digits=10,
         decimal_places=2,
         help_text='Enter the total price of the order',

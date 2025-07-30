@@ -24,7 +24,8 @@ class Reservation(models.Model):
         verbose_name='Reservation Date',
         help_text='Select the date and time of reservation'
     )
-    customer_message = models.TextField(
+    customer_message = models.CharField(
+        max_length=2000,
         verbose_name='Customer message',
         help_text='Enter the message of the customer'
     )
