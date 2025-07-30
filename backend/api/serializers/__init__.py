@@ -6,3 +6,4 @@ from .ReservationSerializer import ReservationSerializer
 from .ProductSerializer import ProductSerializer
 from .OrderItemSerializer import OrderItemSerializer
 from .OrderSerializer import OrderSerializer
+from .CustomUserSerializer import CustomUserSerializer

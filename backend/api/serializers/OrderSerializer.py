@@ -4,6 +4,11 @@ from api.models import Order
 from django.utils import timezone
 
 class OrderSerializer(serializers.ModelSerializer):
+    customer_name = serializers.CharField(
+        max_length=100,
+        help_text="The customer name",
+        required=True
+    )
     order_duedate = serializers.DateTimeField(
         help_text="The due date of order.",
         required=True
@@ -25,6 +30,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'order_uuid',
+            'customer_name',
             'order_duedate',
             'order_status',
             'order_total_price',

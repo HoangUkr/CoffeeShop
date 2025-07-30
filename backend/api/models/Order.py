@@ -17,6 +17,11 @@ class Order(models.Model):
         verbose_name='Order Unique ID',
         help_text='Automatically generated unique ID for the order'
     )
+    customer_name = models.CharField(
+        max_length=255,
+        verbose_name='Name of Customer',
+        help_text='Enter name of customer'
+    )
     order_duedate = models.DateTimeField(
         verbose_name='Order Due Date',
         help_text='Enter due date for Order'

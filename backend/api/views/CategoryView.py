@@ -2,15 +2,18 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import CategorySerializer
 from api.models import Category
+from api.permissions import IsAdminUserRole
 
 from django.shortcuts import get_object_or_404
 
 # Create category view
 class CategoryCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def post(self, request, *args, **kwargs):
         serializer = CategorySerializer(data=request.data)
@@ -22,6 +25,7 @@ class CategoryCreateView(APIView):
 # Update category view
 class CategoryModifyView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def put(self, request, pk, *args, **kwargs):
         category = get_object_or_404(Category, pk=pk)
@@ -41,6 +45,7 @@ class CategoryModifyView(APIView):
 
 # Delete category view
 class CategoryDeleteView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
     def delete(self, request, pk, *args, **kwargs):
         category = get_object_or_404(Category, pk=pk)
         category.delete()
@@ -48,6 +53,7 @@ class CategoryDeleteView(APIView):
     
 # List all categories
 class CategoryListView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
