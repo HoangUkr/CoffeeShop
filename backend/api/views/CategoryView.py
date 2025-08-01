@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 # Create category view
 class CategoryCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def post(self, request, *args, **kwargs):
         serializer = CategorySerializer(data=request.data)
@@ -53,7 +53,7 @@ class CategoryDeleteView(APIView):
     
 # List all categories
 class CategoryListView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)

@@ -70,8 +70,6 @@ const Navbar = () => {
                       <Menu
                         as="div"
                         className="relative inline-block text-left"
-                        onMouseEnter={() => setMenuOpen(true)}
-                        inMouseLeave={() => setMenuOpen(false)}
                       >
                         <Menu.Button className="inline-flex items-center px-3 py-2 text-sm font-medium hover:text-yellow-300">
                           <span>Menu</span>

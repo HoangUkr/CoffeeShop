@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 items-center">
       <div className="aspect-w-1 aspect-h-1 w-full bg-gray-100 flex items-center justify-center h-48">
         <img
-          src={product.image}
+          src={product.images[0].image}
           alt={product.name}
           className="object-contain bg-gray-100 w-full h-full"
         />
@@ -25,10 +25,10 @@ const ProductCard = ({ product }) => {
       <div className="p-4 flex flex-col justify-between h-[160px]">
         <div className="flex flex-col items-center">
           <h3 className="text-lg font-semibold text-center text-[#4B2E2E] truncate">
-            {product.name}
+            {product.product_name}
           </h3>
           <p className="text-yellow-700 font-medium mb-2">
-            ${product.price.toFixed(2)}
+            ${product.product_price}
           </p>
         </div>
 

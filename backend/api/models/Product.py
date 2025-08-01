@@ -23,6 +23,14 @@ class Product(models.Model):
         on_delete=models.CASCADE,
         related_name='products'
     )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Created Date of Product'
+    )
+    updated_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Updated Date of Product'
+    )
     
     class Meta:
         db_table = 'product'

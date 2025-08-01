@@ -25,7 +25,7 @@ class ProductListView(APIView):
 # Create product with category
 class ProductCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
