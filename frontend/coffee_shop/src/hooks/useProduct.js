@@ -1,30 +1,54 @@
 import { useState, useEffect } from "react";
 import api from "../api/axiosInstance";
 
+// Import service funtions
+import {
+  fetchProductService,
+  createProductService,
+  updateProductService,
+  deleteProductService,
+} from "../services/productService";
+
 export default function useProducts(filters) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchProduct() {
+    const getProducts = async () => {
       setLoading(true);
-      setError(null);
       try {
-        const params = {};
-        if (filters.name) params.name = filters.name;
-        if (filters.price) params.price = filters.price;
-        if (filters.category) params.category = filters.category;
-
-        const response = await api.get("v1/products/", { params });
+        const response = await fetchProductService(filters);
         setProducts(response.data);
       } catch (err) {
-        setError(err.response?.data || "Fetch error");
+        setError(err);
       } finally {
         setLoading(false);
       }
-    }
-    fetchProduct();
+    };
+
+    getProducts();
   }, [filters]);
-  return { products, loading, error };
+
+  // Function to create a new product
+  const createProduct = async (data) => {
+    debugger;
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await createProductService({
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        category: data.category,
+      });
+      setProducts((prev) => [...prev, response.data]);
+    } catch (err) {
+      setError(err);
+      throw err; // Re-throw to handle it in the component if needed
+    } finally {
+      setLoading(false);
+    }
+  };
+  return { products, loading, error, createProduct };
 }

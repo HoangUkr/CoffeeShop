@@ -13,14 +13,14 @@ from django.shortcuts import get_object_or_404
 # List of product by category or not
 class ProductListView(APIView):
     # permission_classes = [AllowAny]
-    def get(self, request, category_id=None):
+    def get(self, request):
+        category_id = request.query_params.get('category', None)
         if category_id:
-            category = get_object_or_404(Category, pk=category_id)
-            products = Product.objects.filter(category=category)
+            products = Product.objects.filter(category_id=category_id)
         else:
             products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Create product with category
 class ProductCreateView(APIView):
