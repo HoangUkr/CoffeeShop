@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 # Create team member
 class TeamCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def post(self, request, *args, **kwargs):
         serializer = TeammateSerializer(data=request.data)
@@ -25,7 +25,7 @@ class TeamCreateView(APIView):
 # Update or partially update team member
 class TeamModifyView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def put(self, request, pk, *args, **kwargs):
         team_member = get_object_or_404(Teammate, pk=pk)
@@ -45,7 +45,7 @@ class TeamModifyView(APIView):
 
 # Delete team member
 class TeamDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def delete(self, request, pk, *args, **kwargs):
         team_member = get_object_or_404(Teammate, pk=pk)
@@ -54,7 +54,7 @@ class TeamDeleteView(APIView):
 
 # List all team members
 class TeamListView(APIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     
     def get(self, request, *args, **kwargs):
         team_members = Teammate.objects.all()

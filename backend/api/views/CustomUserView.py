@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 # Create a new user view
 class CustomUserCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
@@ -24,7 +24,7 @@ class CustomUserCreateView(APIView):
 
 # List all user view
 class CustomUserListView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     
     def get(self, request):
         users = CustomUser.objects.all()
@@ -34,7 +34,7 @@ class CustomUserListView(APIView):
 # Update user view
 class CustomUserModifyView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def put(self, request, pk):
         user = get_object_or_404(CustomUser, pk=pk)
@@ -55,7 +55,7 @@ class CustomUserModifyView(APIView):
 # Delete user view
 class CustomUserDeleteView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def delete(self, request, pk):
         user = get_object_or_404(CustomUser, pk=pk)

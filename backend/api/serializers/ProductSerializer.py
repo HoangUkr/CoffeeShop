@@ -32,6 +32,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'product_name',
+            'thumbnail',
             'product_price',
             'product_like_count',
             'category',

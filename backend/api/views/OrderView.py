@@ -12,8 +12,8 @@ from django.shortcuts import get_object_or_404
 
 # View create Order
 class OrderCreateView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [AllowAny]
+    # parser_classes = [MultiPartParser, FormParser]
+    # permission_classes = [AllowAny]
     def post(self, request):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():

@@ -5,3 +5,4 @@ from .ProductView import ProductCreateView, ProductDeleteView, ProductListView, 
 from .OrderView import OrderCreateView, OrderListView, OrderDeleteView, OrderModifyView
 from .OrderItemView import OrderItemCreateView, OrderItemDeleteView, OrderItemListView, OrderItemModifyView
 from .CustomUserView import CustomUserCreateView, CustomUserDeleteView, CustomUserListView, CustomUserModifyView
+from .ReservationView import ReservationCreateView, ReservationListView, ReservationDeleteView, ReservationModifyView

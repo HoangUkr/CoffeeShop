@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 
 # View List of Review
 class ReviewListView(APIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     
     def get(self, request, product_id=None):
         if product_id:
@@ -26,7 +26,7 @@ class ReviewListView(APIView):
 # View Create of Review
 class ReviewCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     def post(self, request, product_id):
         product = get_object_or_404(Product, pk=product_id)
         data = request.data.copy()
@@ -39,7 +39,7 @@ class ReviewCreateView(APIView):
 
 # View to delete Review
 class ReviewDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     def delete(self, request, pk):
         review = get_object_or_404(Review, pk=pk)
         review.delete()

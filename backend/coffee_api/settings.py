@@ -51,6 +51,14 @@ INSTALLED_APPS = [
     'corsheaders',  # For handling CORS
 ]
 
+# Parser settings for DRF
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+    )
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

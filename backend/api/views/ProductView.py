@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 
 # List of product by category or not
 class ProductListView(APIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     def get(self, request, category_id=None):
         if category_id:
             category = get_object_or_404(Category, pk=category_id)
@@ -44,7 +44,7 @@ class ProductCreateView(APIView):
 # Update product
 class ProductModifyView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def put(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
@@ -62,7 +62,7 @@ class ProductModifyView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # Delete product
 class ProductDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     def delete(self, request, pk):
         products = get_object_or_404(Product, pk=pk)
         products.delete()

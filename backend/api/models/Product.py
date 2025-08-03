@@ -18,6 +18,11 @@ class Product(models.Model):
         verbose_name='Product like count',
         help_text='Enter the like count of product'
     )
+    thumbnail = models.ImageField(
+        upload_to='products/',
+        verbose_name='Product thumbnail',
+        help_text='Upload the thumbnail image of product'
+    )
     category = models.ForeignKey(
         'Category',
         on_delete=models.CASCADE,

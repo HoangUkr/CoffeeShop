@@ -24,7 +24,8 @@ class ReservationSerializer(serializers.ModelSerializer):
         help_text="Reservation Date.",
     )
     customer_message = serializers.CharField(
-        required=True,
+        required=False,
+        allow_blank=True,
         help_text="The customer message",
     )
     

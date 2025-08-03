@@ -25,7 +25,7 @@ class CategoryCreateView(APIView):
 # Update category view
 class CategoryModifyView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def put(self, request, pk, *args, **kwargs):
         category = get_object_or_404(Category, pk=pk)
@@ -45,7 +45,7 @@ class CategoryModifyView(APIView):
 
 # Delete category view
 class CategoryDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUserRole]
+    # permission_classes = [IsAuthenticated, IsAdminUserRole]
     def delete(self, request, pk, *args, **kwargs):
         category = get_object_or_404(Category, pk=pk)
         category.delete()
