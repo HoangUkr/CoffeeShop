@@ -36,12 +36,25 @@ export default function useProducts(filters) {
     setLoading(true);
     setError(null);
     try {
-      const response = await createProductService({
-        name: data.name,
-        description: data.description,
-        price: data.price,
-        category: data.category,
-      });
+      let formData;
+      if (data instanceof FormData) {
+        formData = data; // If data is already a FormData object
+      } else {
+        const formData = new FormData();
+        formData.append("product_name", data.product_name);
+        formData.append("product_price", data.product_price);
+        formData.append("product_like_count", data.product_like_count);
+        formData.append("category", data.category);
+        if (data.thumbnail) {
+          formData.append("thumbnail", data.thumbnail);
+        }
+        if (data.images && data.images.length > 0) {
+          data.images.forEach((img) => {
+            formData.append("images", img);
+          });
+        }
+      }
+      const response = await createProductService(formData);
       setProducts((prev) => [...prev, response.data]);
     } catch (err) {
       setError(err);

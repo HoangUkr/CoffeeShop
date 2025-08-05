@@ -14,6 +14,8 @@ import ProductPage from "./pages/ProductPage";
 import LoginPage from "./pages/LoginPage";
 import ProductListPage from "./pages/ProductListPage";
 import OrderPage from "./pages/OrderPage";
+import CategoryFormPage from "./pages/CategoryFormPage";
+import ProductFormPage from "./pages/ProductFormPage";
 
 function App() {
   return (
@@ -29,6 +31,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/products" element={<ProductListPage />} />
           <Route path="/customer-data" element={<OrderPage />} />
+          <Route path="/category-form" element={<CategoryFormPage />} />
+          <Route path="/product-form" element={<ProductFormPage />} />
+          {/* Add other routes as needed */}
         </Routes>
       </main>
       <Footer></Footer>

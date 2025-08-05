@@ -29,7 +29,7 @@ export default function useCategories(filters) {
     setError(null);
     try {
       const response = await createCategoryService({
-        name: data.name
+        category_name: data.category_name
       });
       setCategories((prev) => [...prev, response.data]);
     } catch (err) {

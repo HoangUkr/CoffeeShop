@@ -29,6 +29,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY . .
 RUN rm -rf /app/.venv
 
+# Set the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Run migrations and collectstatic if needed
 EXPOSE 8000
+ENTRYPOINT ["/entrypoint.sh"]
+# Start the application using uv and gunicorn
 CMD ["uv", "run", "gunicorn", "coffee_api.wsgi:application", "--bind", "0.0.0.0:8000"]

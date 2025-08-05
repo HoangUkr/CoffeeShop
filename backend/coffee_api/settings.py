@@ -144,7 +144,7 @@ AUTH_USER_MODEL = 'api.CustomUser'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",  # Adjust if needed
+        "LOCATION": "redis://redis:6379/1",  # Adjust if needed
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -183,3 +183,7 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('API_SECRET')
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Static files settings
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"

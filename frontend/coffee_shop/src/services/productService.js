@@ -7,7 +7,11 @@ export const fetchProductService = (filters) => {
 
 // Create, update, and delete product services
 export const createProductService = (data) => {
-  return api.post("v1/products/create/", data);
+  return api.post("v1/products/create/", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const updateProductService = (id, data) => {
