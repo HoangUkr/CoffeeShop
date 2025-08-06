@@ -1,5 +1,8 @@
 from django.db import models
 
+# Import Cloudinary Storage
+from cloudinary_storage.storage import MediaCloudinaryStorage
+
 # Model class for Product
 class Product(models.Model):
     product_name = models.CharField(
@@ -20,6 +23,7 @@ class Product(models.Model):
     )
     thumbnail = models.ImageField(
         upload_to='products/',
+        storage=MediaCloudinaryStorage(),
         verbose_name='Product thumbnail',
         help_text='Upload the thumbnail image of product'
     )
@@ -27,6 +31,11 @@ class Product(models.Model):
         'Category',
         on_delete=models.CASCADE,
         related_name='products'
+    )
+    product_description = models.TextField(
+        blank=True,
+        verbose_name='Product description',
+        help_text='Enter the description of product'
     )
     created_at = models.DateTimeField(
         auto_now_add=True,

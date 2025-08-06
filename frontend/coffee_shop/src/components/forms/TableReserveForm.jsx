@@ -23,7 +23,7 @@ const isValidWorkingTime = (time) => {
 
 // Function to validate the form data
 const isFormValid = (data) => {
-  debugger;
+  
   // Check if all required fields are filled and valid
   return (
     utils.validateEmail(data.email) &&
@@ -52,7 +52,7 @@ const TableReserveForm = () => {
 
   // Handle form submission
   const handleSubmit = async (event) => {
-    debugger;
+    
     event.preventDefault();
 
     if (!isFormValid({ name, people, email, phone, date, time })) {

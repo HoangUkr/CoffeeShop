@@ -48,7 +48,7 @@ const ProductForm = ({ initial = initialData, onSubmit }) => {
   };
 
   const handleSubmit = async (e) => {
-    debugger;
+    
     e.preventDefault();
     let formDataToSubmit = new FormData();
     formDataToSubmit.append("product_name", formData.productName);
@@ -62,11 +62,6 @@ const ProductForm = ({ initial = initialData, onSubmit }) => {
       formData.productImages.forEach((image, idx) => {
         formDataToSubmit.append("images", image);
       });
-    }
-
-    // Log form data for debugging
-    for (let pair of formDataToSubmit.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
     }
 
     try {

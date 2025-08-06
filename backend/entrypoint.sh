@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Make migrations
+uv run python manage.py makemigrations
+
 # Run migrations
 uv run python manage.py migrate
 

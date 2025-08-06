@@ -35,6 +35,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'thumbnail',
             'product_price',
             'product_like_count',
+            'product_description',
             'category',
             'images',
             'created_at',

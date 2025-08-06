@@ -15,7 +15,7 @@ const CategoryForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    debugger;
+    
     if (loading) return; // Prevent multiple submissions while loading
     e.preventDefault();
     try {

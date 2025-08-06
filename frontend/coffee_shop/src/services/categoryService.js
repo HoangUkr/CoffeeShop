@@ -6,7 +6,7 @@ export const fetchCategoriesService = (filters) => {
 };
 
 export const createCategoryService = (data) => {
-  debugger;
+  
   return api.post("v1/categories/create/", data, {
     headers: {
       "Content-Type": "multipart/form-data",

@@ -3,25 +3,53 @@ import ProductCard from "../components/cards/ProductCard";
 import { Listbox } from "@headlessui/react";
 
 // Import hooks
-import useProducts from "../hooks/useProduct"; // Make sure this accepts filters
+import useProducts from "../hooks/useProduct";
+import useCategories from "../hooks/useCategory";
 
-const categories = ["All", "Coffee", "Cake", "Tea"];
+// const categories = ["All", "Coffee", "Cake", "Tea"];
 
 const ProductListPage = () => {
+  const MIN_PRICE = 0; // Minimum price for the range slider
+  const MAX_PRICE = 10; // Maximum price for the range slider
+
   const [searchName, setSearchName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [priceRange, setPriceRange] = useState([0, 10]);
+  const [priceRange, setPriceRange] = useState([MIN_PRICE, MAX_PRICE]);
   const [filters, setFilters] = useState({});
 
-  const { products, loading, error } = useProducts(filters);
+  const {
+    categories,
+    loading: categoriesLoading,
+    error: categoriesError,
+  } = useCategories();
+  const {
+    products,
+    loading: productLoading,
+    error: productError,
+  } = useProducts(filters);
 
   const handleSearch = () => {
-    const newFilters = {
-      name: searchName,
-      category: selectedCategory !== "All" ? selectedCategory : undefined,
-      price: priceRange[1],
-    };
+    const newFilters = {};
+    if (searchName.trim()) {
+      newFilters.product_name = searchName.trim();
+    }
+    if (selectedCategory !== "All") {
+      newFilters.category = selectedCategory;
+    }
+    if (priceRange[1] > 0) {
+      newFilters.max_price = priceRange[1];
+    }
+    if (priceRange[0] > MAX_PRICE) {
+      newFilters.min_price = priceRange[0];
+    }
     setFilters(newFilters);
+  };
+
+  const categoryOptions = ["All", ...(categories?.map((cat) => cat.id) || [])];
+  const getCategoryName = (value) => {
+    if (value === "All") return "All";
+    const category = categories?.find((cat) => cat.id === value);
+    return category ? category.category_name : value;
   };
 
   return (
@@ -59,18 +87,31 @@ const ProductListPage = () => {
               <Listbox value={selectedCategory} onChange={setSelectedCategory}>
                 <div className="relative">
                   <Listbox.Button className="w-full border border-gray-300 rounded-md px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-yellow-400 text-[#4B2E2E]">
-                    {selectedCategory}
+                    {getCategoryName(selectedCategory)}
                   </Listbox.Button>
                   <Listbox.Options className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10 text-[#4B2E2E]">
-                    {categories.map((cat) => (
-                      <Listbox.Option
-                        key={cat}
-                        value={cat}
-                        className="px-4 py-2 hover:bg-yellow-100 cursor-pointer"
-                      >
-                        {cat}
-                      </Listbox.Option>
-                    ))}
+                    {categoriesLoading ? (
+                      <div className="px-4 py-2">Loading categories...</div>
+                    ) : (
+                      <>
+                        <Listbox.Option
+                          key="all"
+                          value="All"
+                          className="px-4 py-2 hover:bg-yellow-100 cursor-pointer"
+                        >
+                          All
+                        </Listbox.Option>
+                        {categories?.map((cat) => (
+                          <Listbox.Option
+                            key={cat.id}
+                            value={cat.id}
+                            className="px-4 py-2 hover:bg-yellow-100 cursor-pointer"
+                          >
+                            {cat.category_name}
+                          </Listbox.Option>
+                        ))}
+                      </>
+                    )}
                   </Listbox.Options>
                 </div>
               </Listbox>
@@ -83,8 +124,8 @@ const ProductListPage = () => {
               </label>
               <input
                 type="range"
-                min={0}
-                max={10}
+                min={MIN_PRICE}
+                max={MAX_PRICE}
                 step={0.5}
                 value={priceRange[1]}
                 onChange={(e) => setPriceRange([0, parseFloat(e.target.value)])}
@@ -108,8 +149,8 @@ const ProductListPage = () => {
         {/* Product Grid */}
         <div className="lg:col-span-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
+            {productLoading && <p>Loading...</p>}
+            {productError && <p className="text-red-500">{productError}</p>}
             {products.length > 0 ? (
               products.map((product) => (
                 <ProductCard key={product.id} product={product} />

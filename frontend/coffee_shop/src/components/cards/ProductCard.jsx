@@ -16,8 +16,8 @@ const ProductCard = ({ product }) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 items-center">
       <div className="aspect-w-1 aspect-h-1 w-full bg-gray-100 flex items-center justify-center h-48">
         <img
-          src={product.images[0].image}
-          alt={product.name}
+          src={product.thumbnail}
+          alt={product.product_name}
           className="object-contain bg-gray-100 w-full h-full"
         />
       </div>

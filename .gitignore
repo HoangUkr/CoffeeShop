@@ -1,2 +1,11 @@
-# Environment variables
+# Environment files
 .env
+.env.local
+.env.production
+*.env
+
+# Other sensitive files
+/backend/.env
+
+/frontend/coffee_shop/.env
+

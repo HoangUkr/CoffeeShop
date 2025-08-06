@@ -11,6 +11,7 @@ import {
 
 export default function useProducts(filters) {
   const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -26,13 +27,39 @@ export default function useProducts(filters) {
         setLoading(false);
       }
     };
-
-    getProducts();
+    if (filters !== undefined) {
+      getProducts();
+    }
   }, [filters]);
+
+  // Function to fetch a single product by ID
+  const getProductById = async (id) => {
+    setLoading(true);
+    setError(null);
+    if (!id) {
+      setLoading(false);
+      setError("Invalid product ID");
+      return null;
+    }
+    try {
+      const response = await fetchProductService({ id });
+      if (response.data && response.data.length > 0) {
+        const productData = response.data[0]; // Assuming the API returns an array
+        setProduct(productData);
+        return productData;
+      } else {
+        throw new Error("Product not found");
+      }
+    } catch (error) {
+      setError(error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Function to create a new product
   const createProduct = async (data) => {
-    debugger;
     setLoading(true);
     setError(null);
     try {
@@ -40,7 +67,7 @@ export default function useProducts(filters) {
       if (data instanceof FormData) {
         formData = data; // If data is already a FormData object
       } else {
-        const formData = new FormData();
+        formData = new FormData();
         formData.append("product_name", data.product_name);
         formData.append("product_price", data.product_price);
         formData.append("product_like_count", data.product_like_count);
@@ -63,5 +90,13 @@ export default function useProducts(filters) {
       setLoading(false);
     }
   };
-  return { products, loading, error, createProduct };
+  return {
+    products,
+    product,
+    loading,
+    error,
+    createProduct,
+    getProductById,
+    setProduct,
+  };
 }

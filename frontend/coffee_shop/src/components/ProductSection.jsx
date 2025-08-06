@@ -6,7 +6,7 @@ import useCategories from "../hooks/useCategory";
 import useProducts from "../hooks/useProduct";
 
 const ProductSection = () => {
-  debugger;
+  
   const {
     categories,
     loading: categoriesLoading,
@@ -17,7 +17,7 @@ const ProductSection = () => {
 
   // Use the first category as default if available
   useEffect(() => {
-    debugger;
+    
     if (categories.length > 0 && !category) {
       setCategory(categories[0].id);
       // didSetDefault.current = true;

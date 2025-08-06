@@ -24,7 +24,7 @@ export default function useCategories(filters) {
 
   // Function to create a new category
   const createCategory = async (data) => {
-    debugger;
+    
     setLoading(true);
     setError(null);
     try {

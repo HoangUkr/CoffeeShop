@@ -14,11 +14,43 @@ from django.shortcuts import get_object_or_404
 class ProductListView(APIView):
     # permission_classes = [AllowAny]
     def get(self, request):
+        # Get all products
+        products = Product.objects.all()
+        
+        # Get the id from request query params
+        id = request.query_params.get('id', None)
+        if id:
+            products = products.filter(id=id)
+            
+        # Get the category from request query params
         category_id = request.query_params.get('category', None)
         if category_id:
-            products = Product.objects.filter(category_id=category_id)
-        else:
-            products = Product.objects.all()
+            products = products.filter(category_id=category_id)
+
+        # Get the product from request query params
+        name = request.query_params.get('product_name', None)
+        if name:
+            products = products.filter(name__icontains=name)
+
+        # Get the product max price from request query params
+        max_price = request.query_params.get('max_price', None)
+        if max_price:
+            try:
+                max_price = float(max_price)
+                products = products.filter(product_price__lte=max_price)
+            except (ValueError, TypeError):
+                pass
+        min_price = request.query_params.get('min_price', None)
+        if min_price:
+            try:
+                min_price = float(min_price)
+                products = products.filter(product_price__gte=min_price)
+            except (ValueError, TypeError):
+                pass
+            
+        # Order by id
+        products = products.order_by('id')
+        
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
