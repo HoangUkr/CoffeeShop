@@ -1,27 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const ProductTab = () => {
+import { useReview } from "../hooks/useReview";
+
+const ProductTab = ({productId}) => {
   const [activeTab, setActiveTab] = useState("info");
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [reviewForm, setReviewForm] = useState({
     name: "",
     email: "",
     comment: "",
   });
 
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: "Alice",
-      date: "2025-07-25",
-      comment: "Loved the smooth flavor and aroma!",
-    },
-    {
-      id: 2,
-      name: "Bob",
-      date: "2025-07-26",
-      comment: "Best coffee I've had this month!",
-    },
-  ]);
+  useEffect(() => {
+    if(productId && activeTab === "reviews") {
+      fetchReviews();
+    }
+  }, [productId, activeTab]);
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -78,7 +76,9 @@ const ProductTab = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Customer Reviews</h3>
             {reviews.length === 0 ? (
-              <p className="text-gray-500">No reviews yet. Be the first to comment!</p>
+              <p className="text-gray-500">
+                No reviews yet. Be the first to comment!
+              </p>
             ) : (
               reviews.map((review) => (
                 <div key={review.id} className="border-b pb-4 mb-4">

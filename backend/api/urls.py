@@ -27,6 +27,7 @@ urlpatterns = [
 
     # Url for reviews
     path('v1/reviews/', ReviewListView.as_view(), name='review-list-all'),  # All reviews
+    path('v1/reviews/create/', ReviewCreateView.as_view(), name='review-create'),  # Create review
     # path('v1/products/<int:product_id>/reviews/', ReviewListView.as_view(), name='review-list-by-product'),  # Reviews for product
     # path('v1/products/<int:product_id>/reviews/create/', ReviewCreateView.as_view(), name='review-create'),  # Create review
     # path('vi/reviews/<int:pk>/delete/', ReviewDeleteView.as_view(), name='review-delete'),  # Delete review

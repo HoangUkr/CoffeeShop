@@ -14,12 +14,16 @@ from django.shortcuts import get_object_or_404
 class ReviewListView(APIView):
     # permission_classes = [AllowAny]
     
-    def get(self, request, product_id=None):
+    def get(self, request):
+        # Get all reviews
+        reviews = Review.objects.all()
+        
+        # Get the id from request query params
+        product_id = request.query_params.get('product_id', None)
         if product_id:
-            product = get_object_or_404(Product, pk=product_id)
-            reviews = Review.objects.filter(product=product)
-        else:
-            reviews = Review.objects.all()
+            reviews = reviews.filter(product_id=product_id)
+            
+        reviews = reviews.order_by('-created_at')
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
 

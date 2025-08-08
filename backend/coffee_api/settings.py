@@ -147,10 +147,12 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'api.CustomUser'
 
 # Caches settings
-CACHES = {
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+if REDIS_PASSWORD:
+    CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",  # Adjust if needed
+        "LOCATION": f"redis://:{REDIS_PASSWORD}@redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
