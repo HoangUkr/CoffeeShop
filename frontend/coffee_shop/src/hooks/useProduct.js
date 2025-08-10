@@ -32,6 +32,12 @@ export default function useProducts(filters) {
     }
   }, [filters]);
 
+  // Function to get category id by product id
+  const getCategoryId = async (productId) => {
+    const res = await api.get(`/v1/products/${productId}/category`);
+    return res.data;
+  };
+
   // Function to fetch a single product by ID
   const getProductById = async (id) => {
     setLoading(true);
@@ -98,5 +104,6 @@ export default function useProducts(filters) {
     createProduct,
     getProductById,
     setProduct,
+    getCategoryId,  
   };
 }

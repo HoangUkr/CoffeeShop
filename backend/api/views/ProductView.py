@@ -99,3 +99,15 @@ class ProductDeleteView(APIView):
         products = get_object_or_404(Product, pk=pk)
         products.delete()
         return Response({'detail': 'Successfully deleted.'}, status=status.HTTP_204_NO_CONTENT)
+
+# Get category by product id
+class ProductCategoryView(APIView):
+    def get(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        if product.category_id:
+            category = get_object_or_404(Category, pk=product.category_id)
+            return Response({
+                'id': category.id,
+                'name': category.category_name
+            }, status=status.HTTP_200_OK)
+        return Response({'detail': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)

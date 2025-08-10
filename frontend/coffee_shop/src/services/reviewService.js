@@ -6,7 +6,12 @@ export const fetchReviewService = (filters) => {
 };
 
 export const createReviewService = (data) => {
-  return api.post("v1/reviews/create/", data);
+  // Explicitly set Content-Type to application/json
+  return api.post("v1/reviews/create/", data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 export const deleteReviewService = (id) => {

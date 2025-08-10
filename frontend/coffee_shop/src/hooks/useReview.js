@@ -1,20 +1,26 @@
-import { useState, useEffect } from "react";
-import { fetchReviewService, createReviewService } from "../services/reviewService";
+import { useState, useEffect, useRef } from "react";
+import {
+  fetchReviewService,
+  createReviewService,
+} from "../services/reviewService";
 
-export default function useReviews(productId) {
+export default function useReviews(filters) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const prevProductId = useRef();
 
   useEffect(() => {
+    // Only fetch if productId changes
+    if (!filters.productId || filters.productId === prevProductId.current) {
+      return;
+    }
+    prevProductId.current = filters.productId;
     const getReviews = async () => {
-        if(!productId) {
-          return;
-        }
       setLoading(true);
       setError(null);
       try {
-        const response = await fetchReviewService(productId);
+        const response = await fetchReviewService(filters);
         setReviews(response.data);
       } catch (err) {
         setError(err);
@@ -23,23 +29,25 @@ export default function useReviews(productId) {
         setLoading(false);
       }
     };
-
     getReviews();
-  }, [productId]);
+  }, [filters.productId]);
 
   // Function to create a new review
   const createReview = async (data) => {
-
     setLoading(true);
     setError(null);
     try {
-      const response = await createReviewService({
+      // Ensure we send a plain JS object and not FormData
+      const payload = {
         reviewer_name: data.reviewer_name,
         reviewer_email: data.reviewer_email,
         reviewer_comment: data.reviewer_comment,
-        product_id: data.productId, // Assuming productId is passed in data
-      });
-      setReviews((prev) => [...prev, response.data]);
+        product_id: filters.productId,
+      };
+      await createReviewService(payload);
+      // Refetch reviews after creation for consistency
+      const reviewsResponse = await fetchReviewService(filters);
+      setReviews(reviewsResponse.data);
     } catch (err) {
       setError(err);
       throw err; // Re-throw to handle it in the component if needed
@@ -47,5 +55,5 @@ export default function useReviews(productId) {
       setLoading(false);
     }
   };
-  return { reservations, loading, error, createReservation };
+  return { reviews, loading, error, createReview };
 }

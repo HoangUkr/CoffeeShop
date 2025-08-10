@@ -17,10 +17,12 @@ const ProductSection = () => {
 
   // Use the first category as default if available
   useEffect(() => {
-    
-    if (categories.length > 0 && !category) {
-      setCategory(categories[0].id);
-      // didSetDefault.current = true;
+    // debugger;
+    if (categories.length > 0) {
+      const found = categories.find(cat => cat.id === category);
+      if (!found) {
+        setCategory(categories[0].id);
+      }
     }
   }, [categories]);
 

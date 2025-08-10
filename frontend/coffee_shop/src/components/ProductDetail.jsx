@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 // Import custom hook
 import useProducts from "../hooks/useProduct";
 
-const ProductDetail = () => {
+const ProductDetail = ({ productId }) => {
   debugger;
-  const { id } = useParams();
+  // const {  } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
   const isFetched = useRef(false);
@@ -21,11 +21,11 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       debugger;
-      if (!id || isFetched.current) return;
+      if (!productId || isFetched.current) return;
       isFetched.current = true;
-      console.log(`Fetching product with ID: ${id}`);
+      console.log(`Fetching product with ID: ${productId}`);
       try {
-        const productData = await getProductById(id);
+        const productData = await getProductById(productId);
         if (productData && productData.thumbnail) {
           setMainImage(productData.thumbnail);
         }
@@ -38,11 +38,11 @@ const ProductDetail = () => {
     return () => {
       isFetched.current = false; // Reset on unmount
     };
-  }, [id]);
+  }, [productId]);
 
   useEffect(() => {
     isFetched.current = false; // Reset when quantity changes
-  }, [id]);
+  }, [productId]);
 
   // Handle adding to cart (placeholder function)
   const handleAddToCart = () => {

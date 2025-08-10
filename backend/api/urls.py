@@ -6,7 +6,7 @@ from api.views import (
     TeamCreateView, TeamModifyView, TeamDeleteView, TeamListView,
     CategoryListView, CategoryDeleteView, CategoryModifyView, CategoryCreateView,
     ReviewListView, ReviewCreateView, ReviewDeleteView,
-    ProductModifyView, ProductCreateView, ProductDeleteView, ProductListView,
+    ProductModifyView, ProductCreateView, ProductDeleteView, ProductListView, ProductCategoryView,
     OrderItemModifyView, OrderItemCreateView, OrderItemDeleteView, OrderItemListView,
     OrderCreateView, OrderDeleteView, OrderListView, OrderModifyView,
     CustomUserModifyView, CustomUserCreateView, CustomUserDeleteView, CustomUserListView,
@@ -34,7 +34,7 @@ urlpatterns = [
 
     # Url for product
     path('v1/products/', ProductListView.as_view(), name='product-list'),  # List all products
-    # path('v1/products/category/<int:category_id>/', ProductListView.as_view(), name='product-list-by-category'),   # # List all products by category
+    path('v1/products/<int:pk>/category/', ProductCategoryView.as_view(), name='category-by-product'),   # # List all products by category
     path('v1/products/create/', ProductCreateView.as_view(), name='product-create'),   # Create product with upload image
     # path('v1/products/<int:pk>/update/', ProductModifyView.as_view(), name='product-update'),  # Modify product with upload image
     # path('v1/products/<int:pk>/delete/', ProductDeleteView.as_view(), name='product-delete'),  # Delete product

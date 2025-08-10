@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from api.serializers import ReviewSerializer
@@ -13,13 +13,12 @@ from django.shortcuts import get_object_or_404
 # View List of Review
 class ReviewListView(APIView):
     # permission_classes = [AllowAny]
-    
     def get(self, request):
         # Get all reviews
         reviews = Review.objects.all()
         
         # Get the id from request query params
-        product_id = request.query_params.get('product_id', None)
+        product_id = request.query_params.get('productId', None)
         if product_id:
             reviews = reviews.filter(product_id=product_id)
             
@@ -29,9 +28,10 @@ class ReviewListView(APIView):
 
 # View Create of Review
 class ReviewCreateView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     # permission_classes = [AllowAny]
-    def post(self, request, product_id):
+    def post(self, request):
+        product_id = request.data.get('product_id')
         product = get_object_or_404(Product, pk=product_id)
         data = request.data.copy()
         data['product'] = product.id

@@ -1,29 +1,51 @@
-import React from "react";
-import ProductCard from "../components/cards/ProductCard"; // Adjust path if needed
+import React, { useEffect, useState } from "react";
+import ProductCard from "../components/cards/ProductCard";
+import useProducts from "../hooks/useProduct";
 
-const relatedProducts = [
-  { id: 1, name: "Vanilla Latte", price: 4.2, image: "/products/coffee.webp" },
-  { id: 2, name: "Hazelnut Mocha", price: 4.5, image: "/products/coffee.webp" },
-  { id: 3, name: "Iced Americano", price: 3.8, image: "/products/coffee.webp" },
-  { id: 4, name: "Cappuccino", price: 4.0, image: "/products/coffee.webp" },
-  { id: 5, name: "Flat White", price: 4.3, image: "/products/coffee.webp" },
-  { id: 6, name: "Flat White", price: 4.3, image: "/products/coffee.webp" },
-  { id: 7, name: "Flat White", price: 4.3, image: "/products/coffee.webp" },
-];
+const RelatedProductsCarousel = ({ productId }) => {
+  const [categoryId, setCategoryId] = useState(null);
+  const [filters, setFilters] = useState(undefined);
+  // Call useProducts once at the top level
+  const { products, loading, getCategoryId } = useProducts(filters);
 
-const RelatedProductsCarousel = () => {
+  useEffect(() => {
+    const fetchCategory = async () => {
+      const category = await getCategoryId(productId);
+      if (category && category.id) {
+        setCategoryId(category.id);
+        setFilters({ category: category.id });
+      } else {
+        setCategoryId(null);
+        setFilters(undefined);
+      }
+    };
+    if (productId) fetchCategory();
+  }, [productId]);
+  debugger;
+  const relatedProducts = products ? products.filter((p) => String(p.id) !== String(productId)) : [];
+  debugger;
   return (
     <div className="mt-16">
-      <h3 className="text-2xl font-bold text-[#4B2E2E] mb-4">Related Products</h3>
-      <div className="overflow-x-auto">
-        <div className="flex gap-6 w-max">
-          {relatedProducts.map((product) => (
-            <div key={product.id} className="min-w-[220px]">
-              <ProductCard product={product} />
-            </div>
-          ))}
+      <h3 className="text-2xl font-bold text-[#4B2E2E] mb-4">
+        Related Products
+      </h3>
+      {loading ? (
+        <div>Loading related products...</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <div className="flex gap-6 w-max">
+            {relatedProducts.length === 0 ? (
+              <div>No related products found.</div>
+            ) : (
+              relatedProducts.map((product) => (
+                <div key={product.id} className="min-w-[220px]">
+                  <ProductCard product={product} />
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

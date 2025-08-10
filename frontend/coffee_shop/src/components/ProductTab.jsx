@@ -1,37 +1,33 @@
 import React, { useEffect, useState } from "react";
+import useReviews from "../hooks/useReview";
 
-import { useReview } from "../hooks/useReview";
-
-const ProductTab = ({productId}) => {
+const ProductTab = ({ productId }) => {
+  // debugger;
   const [activeTab, setActiveTab] = useState("info");
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [reviewForm, setReviewForm] = useState({
     name: "",
     email: "",
     comment: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const { reviews, loading, error, createReview } = useReviews({ productId });
 
-  useEffect(() => {
-    if(productId && activeTab === "reviews") {
-      fetchReviews();
-    }
-  }, [productId, activeTab]);
-
-
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newReview = {
-      id: Date.now(),
-      name: reviewForm.name,
-      date: new Date().toISOString().split("T")[0],
-      comment: reviewForm.comment,
-    };
-    setReviews([newReview, ...reviews]);
-    alert("Review submitted!");
-    setReviewForm({ name: "", email: "", comment: "" });
+    setSubmitting(true);
+    try {
+      await createReview({
+        reviewer_name: reviewForm.name,
+        reviewer_email: reviewForm.email,
+        reviewer_comment: reviewForm.comment,
+        // product_id: productId,
+      });
+      setReviewForm({ name: "", email: "", comment: "" });
+    } catch (err) {
+      // Optionally show error
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -56,7 +52,7 @@ const ProductTab = ({productId}) => {
               : "bg-gray-500 text-white"
           }`}
         >
-          Reviews
+          Reviews ({reviews.length})
         </button>
       </div>
 
@@ -72,23 +68,39 @@ const ProductTab = ({productId}) => {
         </div>
       ) : (
         <div className="bg-white p-6 rounded-xl shadow-sm text-[#4B2E2E] space-y-6">
+          {/* Error Display */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              Error loading reviews. Please try again.
+            </div>
+          )}
+
           {/* Previous Reviews */}
           <div>
             <h3 className="text-xl font-bold mb-4">Customer Reviews</h3>
-            {reviews.length === 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+                <span className="ml-2">Loading reviews...</span>
+              </div>
+            ) : reviews.length === 0 ? (
               <p className="text-gray-500">
                 No reviews yet. Be the first to comment!
               </p>
             ) : (
               reviews.map((review) => (
                 <div key={review.id} className="border-b pb-4 mb-4">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-semibold">{review.name}</span>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-semibold">
+                      {review.reviewer_name}
+                    </span>
                     <span className="text-sm text-gray-400">
-                      {new Date(review.date).toLocaleDateString()}
+                      {review.created_at
+                        ? new Date(review.created_at).toLocaleDateString()
+                        : ""}
                     </span>
                   </div>
-                  <p className="text-gray-700">{review.comment}</p>
+                  <p className="text-gray-700">{review.reviewer_comment}</p>
                 </div>
               ))
             )}
@@ -119,7 +131,7 @@ const ProductTab = ({productId}) => {
                 className="w-full px-4 py-2 border rounded"
               />
               <textarea
-                placeholder="Comment"
+                placeholder="Write your review..."
                 value={reviewForm.comment}
                 onChange={(e) =>
                   setReviewForm({ ...reviewForm, comment: e.target.value })
@@ -130,9 +142,10 @@ const ProductTab = ({productId}) => {
               ></textarea>
               <button
                 type="submit"
-                className="bg-yellow-500 hover:bg-yellow-600 text-[#4B2E2E] font-semibold px-6 py-2 rounded-full"
+                disabled={submitting || loading}
+                className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 text-[#4B2E2E] font-semibold px-6 py-2 rounded-full transition-colors"
               >
-                Submit
+                {submitting ? "Submitting..." : "Submit Review"}
               </button>
             </form>
           </div>
