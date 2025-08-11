@@ -10,12 +10,17 @@ from api.permissions import IsAdminUserRole
 
 from django.shortcuts import get_object_or_404
 
+# Import task
+from api.tasks import send_reservation_confirmation
+
 # Create reservation view
 class ReservationCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
     # permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def post(self, request, *args, **kwargs):
+        # Retrieve data for sending email
+        
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import useProducts from "../hooks/useProduct";
 
 const ProductDetail = ({ productId }) => {
-  debugger;
+  // debugger;
   // const {  } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
@@ -20,7 +20,7 @@ const ProductDetail = ({ productId }) => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      debugger;
+      // debugger;
       if (!productId || isFetched.current) return;
       isFetched.current = true;
       console.log(`Fetching product with ID: ${productId}`);
@@ -76,7 +76,7 @@ const ProductDetail = ({ productId }) => {
       </div>
     );
   }
-  debugger;
+  // debugger;
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
       {/* Left side image section */}

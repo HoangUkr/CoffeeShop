@@ -89,7 +89,63 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-  
+
+  celery:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A coffee_api worker --loglevel=info
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+    env_file:
+      - ./backend/.env
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: coffee_api.settings
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    networks:
+      - app-network
+
+    depends_on:
+      - backend
+      - redis
+    restart: always
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: celery-beat
+    command: celery -A coffee_api beat --loglevel=INFO
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+    environment:
+      DJANGO_SETTINGS_MODULE: coffee_api.settings
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - app-network
+    restart: always
+    
+  flower:
+    image: mher/flower
+    container_name: flower
+    command: ["flower", "--broker=redis://redis:6379/0"]
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery
+      - redis
+    networks:
+      - app-network
+    restart: always
+
   mongo:
     image: mongo:6.0
     container_name: mongo
