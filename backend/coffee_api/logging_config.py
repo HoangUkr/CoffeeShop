@@ -68,44 +68,66 @@ def setup_logging():
 # Custom loguru sink for Graylog
 def graylog_sink(message):
     if graylog_handler:
-        record = logging.LogRecord(
-            name="loguru",
-            level=getattr(logging, message.record["level"].name),
-            pathname="",
-            lineno=0,
-            msg=message,
-            args=(),
-            exc_info=None
-        )
-        graylog_handler.emit(record)
+        try:
+            record = logging.LogRecord(
+                name="loguru",
+                level=getattr(logging, message.record["level"].name),
+                pathname="",
+                lineno=0,
+                msg=message,
+                args=(),
+                exc_info=None
+            )
+            graylog_handler.emit(record)
+        except Exception as e:
+            # Silently fail if Graylog is not available
+            pass
         
 # Add Graylog sink to loguru
 if graylog_handler:
     logger.add(graylog_sink, format="{message}")
     
-# Test Graylog connection
+# Test Graylog connection with retry logic
 def test_graylog_connection():
-    try:
-        import socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(5)
-        
-        # Test connection to Graylog
-        result = sock.connect_ex(('graylog', 12201))
-        if result == 0:
-            logger.info("✅ Graylog connection successful")
-            return True
-        else:
-            logger.warning("❌ Cannot connect to Graylog")
-            return False
-    except Exception as e:
-        logger.error(f"❌ Graylog connection error: {e}")
-        return False
-    finally:
-        sock.close()
+    import time
+    max_retries = 3
+    retry_delay = 2
+    
+    for attempt in range(max_retries):
+        try:
+            import socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.settimeout(5)
+            
+            # Test connection to Graylog
+            result = sock.connect_ex(('graylog', 12201))
+            sock.close()
+            
+            if result == 0:
+                logger.info("✅ Graylog connection successful")
+                return True
+            else:
+                if attempt < max_retries - 1:
+                    logger.warning(f"❌ Cannot connect to Graylog (attempt {attempt + 1}/{max_retries}), retrying in {retry_delay}s...")
+                    time.sleep(retry_delay)
+                else:
+                    logger.warning("❌ Cannot connect to Graylog after all retries, continuing without Graylog")
+                    return False
+        except Exception as e:
+            if attempt < max_retries - 1:
+                logger.warning(f"❌ Graylog connection error (attempt {attempt + 1}/{max_retries}): {e}, retrying in {retry_delay}s...")
+                time.sleep(retry_delay)
+            else:
+                logger.warning(f"❌ Graylog connection failed after all retries: {e}, continuing without Graylog")
+                return False
+    
+    return False
 
-# Call this in your Django startup
-test_graylog_connection()
+# Call this in your Django startup (non-blocking)
+try:
+    test_graylog_connection()
+except Exception as e:
+    logger.warning(f"Graylog test failed, continuing without Graylog: {e}")
 
 # Test logging
 logger.info("🚀 Django application started")

@@ -22,12 +22,14 @@ services:
       POSTGRES_PORT: 5432
       GRAYLOG_HOST: ${GRAYLOG_HOST}
       GRAYLOG_PORT: ${GRAYLOG_PORT}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
     restart: always
     env_file:
       - ./backend/.env
       - .env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health/"]
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 8000), timeout=5).close()"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,6 +41,8 @@ services:
       db:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      graylog:
         condition: service_healthy
     deploy:
       resources:
@@ -64,7 +68,7 @@ services:
     networks:
       - db-network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -94,6 +98,7 @@ services:
     build: 
       context: ./backend
       dockerfile: Dockerfile
+    container_name: celery
     command: celery -A coffee_api worker --loglevel=info
     volumes:
       - ./backend:/app
@@ -103,14 +108,18 @@ services:
       - .env
     environment:
       DJANGO_SETTINGS_MODULE: coffee_api.settings
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
     networks:
       - app-network
-
+      - db-network
     depends_on:
-      - backend
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     restart: always
 
   celery-beat:
@@ -122,21 +131,34 @@ services:
     volumes:
       - ./backend:/app
       - /app/.venv
+    env_file:
+      - ./backend/.env
+      - .env
     environment:
       DJANGO_SETTINGS_MODULE: coffee_api.settings
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
     depends_on:
-      - backend
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     networks:
       - app-network
+      - db-network
     restart: always
     
   flower:
     image: mher/flower
     container_name: flower
-    command: ["flower", "--broker=redis://redis:6379/0"]
+    env_file:
+      - ./backend/.env
+      - .env
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
     ports:
       - "5555:5555"
     depends_on:
@@ -145,6 +167,7 @@ services:
     networks:
       - app-network
     restart: always
+
 
   mongo:
     image: mongo:6.0
@@ -212,6 +235,12 @@ services:
       - .env
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/api/system/lbstatus"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
     deploy:
       resources:
         limits:

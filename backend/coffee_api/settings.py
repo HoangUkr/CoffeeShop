@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'cloudinary',  # For image handling
     'cloudinary_storage',  # For storing images in Cloudinary
     'rest_framework',  # For REST API
-    'corsheaders',  # For handling CORS
+    'corsheaders',  # For handling CORS,
+    'celery'
 ]
 
 # Parser settings for DRF
