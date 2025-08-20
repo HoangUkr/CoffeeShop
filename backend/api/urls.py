@@ -10,7 +10,8 @@ from api.views import (
     OrderItemModifyView, OrderItemCreateView, OrderItemDeleteView, OrderItemListView,
     OrderCreateView, OrderDeleteView, OrderListView, OrderModifyView,
     CustomUserModifyView, CustomUserCreateView, CustomUserDeleteView, CustomUserListView,
-    ReservationCreateView, ReservationListView, ReservationDeleteView, ReservationModifyView
+    ReservationCreateView, ReservationListView, ReservationDeleteView, ReservationModifyView,
+    Home
 )
 
 urlpatterns = [
@@ -62,4 +63,7 @@ urlpatterns = [
     path('v1/reservations/', ReservationListView.as_view(), name='reservation-list'),
     # path('v1/reservations/<int:pk>/modify/', ReservationModifyView.as_view(), name='reservation-modify'),
     # path('v1/reservations/<int:pk>/delete/', ReservationDeleteView.as_view(), name='reservation-delete'),
+    
+    # Homepage for main api
+    path('v1/', Home.as_view(), name='home'),
 ]
