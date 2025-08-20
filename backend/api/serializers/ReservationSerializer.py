@@ -28,7 +28,11 @@ class ReservationSerializer(serializers.ModelSerializer):
         allow_blank=True,
         help_text="The customer message",
     )
-    
+    number_of_people = serializers.IntegerField(
+        required=True,
+        help_text="The number of people for the reservation.",
+    )
+
     class Meta:
         model = Reservation
         read_only_fields = ('id',)

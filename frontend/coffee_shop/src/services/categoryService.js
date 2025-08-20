@@ -2,7 +2,7 @@ import api from "../api/axiosInstance";
 
 // Fetch categories with optional filters
 export const fetchCategoriesService = (filters) => {
-  return api.get("v1/categories", { params: filters });
+  return api.get("v1/categories/", { params: filters });
 };
 
 export const createCategoryService = (data) => {

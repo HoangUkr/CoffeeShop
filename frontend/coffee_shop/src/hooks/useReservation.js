@@ -30,7 +30,7 @@ export default function useReservations(filters) {
     try {
       const response = await createReservationService({
         customer_name: data.name,
-        people_count: data.people,
+        number_of_people: data.people,
         customer_email: data.email,
         customer_phone: data.phone,
         reservation_date: `${data.date}T${data.time}:00`, // Format as ISO string

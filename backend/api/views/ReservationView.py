@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from api.serializers import ReservationSerializer
 from api.models import Reservation
@@ -21,7 +21,7 @@ from loguru import logger
 # Create reservation view
 class ReservationCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
-    # permission_classes = [IsAuthenticated, IsAdminUserRole]
+    permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
         serializer = ReservationSerializer(data=request.data)
@@ -39,6 +39,7 @@ class ReservationCreateView(APIView):
                     'customer_phone': reservation.customer_phone,
                     'customer_message': reservation.customer_message,
                     'reservation_id': reservation.id,
+                    'number_of_people': reservation.number_of_people,
                 })
                 
                 # Prepare email subject

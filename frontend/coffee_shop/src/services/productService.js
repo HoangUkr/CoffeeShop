@@ -2,7 +2,7 @@ import api from "../api/axiosInstance";
 
 // Fetch products with optional filters
 export const fetchProductService = (filters) => {
-  return api.get("v1/products", { params: filters });
+  return api.get("v1/products/", { params: filters });
 };
 
 // Create, update, and delete product services

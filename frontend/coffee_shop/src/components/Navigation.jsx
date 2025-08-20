@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-/* Impoer Headless UI */
+/* Import Headless UI */
 import { Disclosure, Menu } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { useAdmin } from "../hooks/useAdmin";
 
 // Navigation items
 const navigation = [
@@ -26,8 +27,17 @@ const Navbar = () => {
   // Navigation hook
   const navigate = useNavigate();
 
+  // Admin authentication hook
+  const { isAuthenticated, user, logout, loadingStates } = useAdmin();
+
   // State of menu dropdown
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Handle logout
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
 
   return (
     <Disclosure>
@@ -135,58 +145,60 @@ const Navbar = () => {
                       ></UserCircleIcon>
                     </Menu.Button>
                     <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-[#4B2E2E] shadow-lg ring-1 ring-black/5 focus:outline-none">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-[#3E2626]" : "",
-                              "block px-4 py-2 text-sm text-white"
+                      {isAuthenticated ? (
+                        <>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <div className="px-4 py-2 text-sm text-yellow-300 border-b border-[#3E2626]">
+                                Welcome, {user?.email}
+                              </div>
                             )}
-                          >
-                            Dashboard
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-[#3E2626]" : "",
-                              "block px-4 py-2 text-sm text-white"
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <Link
+                                to="/admin/dashboard"
+                                className={classNames(
+                                  active ? "bg-[#3E2626]" : "",
+                                  "block px-4 py-2 text-sm text-white"
+                                )}
+                              >
+                                Admin Dashboard
+                              </Link>
                             )}
-                          >
-                            Settings
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-[#3E2626]" : "",
-                              "block px-4 py-2 text-sm text-white"
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                onClick={handleLogout}
+                                disabled={loadingStates.logout}
+                                className={classNames(
+                                  active ? "bg-[#3E2626]" : "",
+                                  "block w-full text-left px-4 py-2 text-sm text-white disabled:opacity-50"
+                                )}
+                              >
+                                {loadingStates.logout ? "Logging out..." : "Log out"}
+                              </button>
                             )}
-                          >
-                            Log out
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="/login"
-                            className={classNames(
-                              active ? "bg-[#3E2626]" : "",
-                              "block px-4 py-2 text-sm text-white"
+                          </Menu.Item>
+                        </>
+                      ) : (
+                        <>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <Link
+                                to="/login"
+                                className={classNames(
+                                  active ? "bg-[#3E2626]" : "",
+                                  "block px-4 py-2 text-sm text-white"
+                                )}
+                              >
+                                Admin Login
+                              </Link>
                             )}
-                          >
-                            Log in
-                          </a>
-                        )}
-                      </Menu.Item>
+                          </Menu.Item>
+                        </>
+                      )}
                     </Menu.Items>
                   </Menu>
 

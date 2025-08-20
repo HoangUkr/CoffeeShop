@@ -6,7 +6,6 @@ class Reservation(models.Model):
         max_length=100,
         verbose_name='Customer name',
         help_text='Enter the name of the customer',
-        
     )
     customer_email = models.EmailField(
         max_length=100,
@@ -23,6 +22,11 @@ class Reservation(models.Model):
         blank=False,
         verbose_name='Reservation Date',
         help_text='Select the date and time of reservation'
+    )
+    number_of_people = models.PositiveIntegerField(
+        default=1,
+        verbose_name='Number of People',
+        help_text='Enter the number of people for the reservation',
     )
     customer_message = models.CharField(
         max_length=2000,

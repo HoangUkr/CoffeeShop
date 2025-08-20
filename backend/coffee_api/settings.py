@@ -203,7 +203,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'api' / 'email_template',  # Add email template directory
+            BASE_DIR / 'api' / 'templates' / 'email_template',  # Add email template directory
         ],
         'APP_DIRS': True,
         'OPTIONS': {

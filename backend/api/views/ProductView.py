@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 
 # List of product by category or not
 class ProductListView(APIView):
-    # permission_classes = [AllowAny]
+    permission_classes = [AllowAny]
     def get(self, request):
         # Get all products
         products = Product.objects.all()
@@ -30,7 +30,7 @@ class ProductListView(APIView):
         # Get the product from request query params
         name = request.query_params.get('product_name', None)
         if name:
-            products = products.filter(name__icontains=name)
+            products = products.filter(product_name__icontains=name)
 
         # Get the product max price from request query params
         max_price = request.query_params.get('max_price', None)
@@ -57,8 +57,8 @@ class ProductListView(APIView):
 # Create product with category
 class ProductCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    # permission_classes = [IsAuthenticated]
-    
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
+
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
@@ -76,7 +76,7 @@ class ProductCreateView(APIView):
 # Update product
 class ProductModifyView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
 
     def put(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
@@ -94,7 +94,7 @@ class ProductModifyView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # Delete product
 class ProductDeleteView(APIView):
-    # permission_classes = [IsAuthenticated, IsAdminUserRole]
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
     def delete(self, request, pk):
         products = get_object_or_404(Product, pk=pk)
         products.delete()
@@ -102,6 +102,7 @@ class ProductDeleteView(APIView):
 
 # Get category by product id
 class ProductCategoryView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         if product.category_id:
