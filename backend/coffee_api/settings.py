@@ -323,3 +323,24 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Convert to int with default
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+# Logging settings
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "graylog": {
+            "level": "INFO",
+            "class": "graypy.GELFUDPHandler",
+            "host": "graylog",
+            "port": 12201,
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["graylog"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
