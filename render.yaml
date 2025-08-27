@@ -1,0 +1,144 @@
+services:
+  # Django Backend Web Service
+  - type: web
+    name: coffee-backend
+    env: python
+    plan: standard
+    buildCommand: |
+      pip install uv
+      uv sync --no-install-project --frozen
+      uv run python manage.py collectstatic --noinput
+      uv run python manage.py migrate --noinput
+    startCommand: uv run gunicorn coffee_api.wsgi:application --bind 0.0.0.0:10000
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: coffee_api.settings
+      - key: DATABASE_URL
+        sync: false   # Set your external DB URL in the Render dashboard
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      # Commented out for Render deployment (use external services if needed)
+      # - key: GRAYLOG_HOST
+      #   sync: false
+      # - key: GRAYLOG_PORT
+      #   sync: false
+      # - key: ELASTICSEARCH_URL
+      #   sync: false
+      # - key: MONGODB_URI
+      #   sync: false
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      # Add any other environment variables you need
+
+  # Celery Worker
+  - type: worker
+    name: coffee-celery
+    env: python
+    plan: standard
+    buildCommand: |
+      pip install uv
+      uv sync --no-install-project --frozen
+    startCommand: uv run celery -A coffee_api worker --loglevel=info
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: coffee_api.settings
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      # Commented out for Render deployment (use external services if needed)
+      # - key: GRAYLOG_HOST
+      #   sync: false
+      # - key: GRAYLOG_PORT
+      #   sync: false
+      # - key: ELASTICSEARCH_URL
+      #   sync: false
+      # - key: MONGODB_URI
+      #   sync: false
+
+  # Celery Beat
+  - type: worker
+    name: coffee-celery-beat
+    env: python
+    plan: standard
+    buildCommand: |
+      pip install uv
+      uv sync --no-install-project --frozen
+    startCommand: uv run celery -A coffee_api beat --loglevel=info
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: coffee_api.settings
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      # Commented out for Render deployment (use external services if needed)
+      # - key: GRAYLOG_HOST
+      #   sync: false
+      # - key: GRAYLOG_PORT
+      #   sync: false
+      # - key: ELASTICSEARCH_URL
+      #   sync: false
+      # - key: MONGODB_URI
+      #   sync: false
+
+  # Flower (Celery Monitoring)
+  - type: web
+    name: coffee-flower
+    env: python
+    plan: starter
+    buildCommand: pip install flower
+    startCommand: flower --broker=$(REDIS_URL) --port=5555
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+
+redis:
+  - name: coffee-redis
+    plan: standard

@@ -328,19 +328,46 @@ EMAIL_USE_SSL = False
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {
-        "graylog": {
-            "level": "INFO",
-            "class": "graypy.GELFUDPHandler",
-            "host": "graylog",
-            "port": 12201,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
         },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": "django.log",
+            "formatter": "verbose",
+        },
+        # Commented out for Render deployment - use external Graylog if needed
+        # "graylog": {
+        #     "level": "INFO",
+        #     "class": "graypy.GELFUDPHandler",
+        #     "host": "graylog",
+        #     "port": 12201,
+        # },
     },
     "loggers": {
         "django": {
-            "handlers": ["graylog"],
+            "handlers": ["console", "file"],  # Add "graylog" if using external service
             "level": "INFO",
             "propagate": True,
+        },
+        "api": {
+            "handlers": ["console", "file"],  # Add "graylog" if using external service
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }
