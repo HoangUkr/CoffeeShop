@@ -30,6 +30,8 @@ services:
           type: redis
           name: coffee-redis
           property: connectionString
+      - key: SECRET_KEY
+        generateValue: true  # Auto-generate a secure secret key
       # Commented out for Render deployment (use external services if needed)
       # - key: GRAYLOG_HOST
       #   sync: false
