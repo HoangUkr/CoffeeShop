@@ -1,6 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+// Import utils for form validation
+import utils from "../utils/utils";
+// Import SweetAlert for alerts
+import Swal from "sweetalert2";
+const isFormValid = (data) => {
+  // Check if all required fields are filled and valid
+  return utils.validateEmail(data.email);
+};
 
 const ContactSection = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!isFormValid({ email })) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Input",
+        text: "Please check your input values.",
+      });
+      return;
+    }
+
+  };
   return (
     <section className="bg-[#F9F5F2] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row shadow-lg rounded-xl overflow-hidden bg-white">
@@ -13,7 +37,8 @@ const ContactSection = () => {
           </p>
           <ul className="space-y-4">
             <li>
-              <span className="font-semibold">📍 Address:</span> Beethovenstr. 9, 86150 Augsburg, Germany
+              <span className="font-semibold">📍 Address:</span> Beethovenstr.
+              9, 86150 Augsburg, Germany
             </li>
             <li>
               <span className="font-semibold">📧 Email:</span>{" "}
@@ -27,7 +52,7 @@ const ContactSection = () => {
 
         {/* Contact Form */}
         <div className="lg:w-1/2 p-8 bg-white">
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
                 htmlFor="name"
@@ -38,6 +63,7 @@ const ContactSection = () => {
               <input
                 type="text"
                 id="name"
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Your Name"
                 className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
               />
@@ -52,6 +78,7 @@ const ContactSection = () => {
               <input
                 type="email"
                 id="email"
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
               />
@@ -66,6 +93,7 @@ const ContactSection = () => {
               <textarea
                 id="message"
                 rows="4"
+                onChange={(e) => setMessage(e.target.value)}
                 placeholder="Write your message..."
                 className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
               ></textarea>
