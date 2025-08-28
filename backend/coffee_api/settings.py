@@ -221,27 +221,55 @@ WSGI_APPLICATION = 'coffee_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# For local development, using sqlite3
-IS_LOCAL = False
+import dj_database_url
 
-if IS_LOCAL:
+# Check if DATABASE_URL is provided (for production/cloud deployment)
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    # Use DATABASE_URL for production (Render, Heroku, etc.)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
+    print("✅ Using DATABASE_URL for database connection")
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB'),
-            'USER': os.getenv('POSTGRES_USER'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-            'HOST': os.getenv('POSTGRES_HOST'),
-            'PORT': os.getenv('POSTGRES_PORT')
+    # For local development or when individual env vars are provided
+    IS_LOCAL = os.getenv('POSTGRES_HOST') in [None, 'localhost', '127.0.0.1', 'db']
+    
+    if IS_LOCAL and not os.getenv('POSTGRES_HOST'):
+        # Local development with SQLite
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
+        print("✅ Using SQLite for local development")
+    else:
+        # External PostgreSQL database
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.getenv('POSTGRES_DB'),
+                'USER': os.getenv('POSTGRES_USER'),
+                'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+                'HOST': os.getenv('POSTGRES_HOST'),
+                'PORT': os.getenv('POSTGRES_PORT', '5432'),
+                'OPTIONS': {
+                    'sslmode': 'require',  # Required for most cloud databases
+                    'connect_timeout': 60,
+                },
+                'CONN_MAX_AGE': 600,  # Connection pooling
+            }
+        }
+        print(f"✅ Using PostgreSQL: {os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT', '5432')}")
+        
+        # Debug database connection
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Database Host: {os.getenv('POSTGRES_HOST')}")
+        logger.info(f"Database Name: {os.getenv('POSTGRES_DB')}")
+        logger.info(f"Database User: {os.getenv('POSTGRES_USER')}")
 
 
 # Password validation
