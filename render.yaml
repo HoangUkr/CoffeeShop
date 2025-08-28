@@ -31,23 +31,53 @@ services:
           name: coffee-redis
           property: connectionString
       - key: SECRET_KEY
-        generateValue: true  # Auto-generate a secure secret key
-      # Commented out for Render deployment (use external services if needed)
-      # - key: GRAYLOG_HOST
-      #   sync: false
-      # - key: GRAYLOG_PORT
-      #   sync: false
-      # - key: ELASTICSEARCH_URL
-      #   sync: false
-      # - key: MONGODB_URI
-      #   sync: false
+        sync: false  # Set in Render dashboard
       - key: DJANGO_SECRET_KEY
         sync: false
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
         sync: false
-      # Add any other environment variables you need
+      
+      # Cloudinary configuration - SECURE (set in dashboard)
+      - key: CLOUD_NAME
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_SECRET
+        sync: false
+      
+      # Database configuration - SECURE (set in dashboard)
+      - key: POSTGRES_DB
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        sync: false
+      
+      # Redis configuration - SECURE (set in dashboard)
+      - key: REDIS_PASSWORD
+        sync: false
+      
+      # Email configuration - SECURE (set in dashboard)
+      - key: EMAIL_HOST
+        value: smtp.gmail.com  # This can be public
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_PORT
+        value: "587"  # This can be public
+      
+      # Graylog configuration (optional for production)
+      - key: GRAYLOG_HOST
+        sync: false
+      - key: GRAYLOG_PORT
+        value: "12201"  # This can be public
 
   # Celery Worker
   - type: worker
@@ -78,15 +108,40 @@ services:
           type: redis
           name: coffee-redis
           property: connectionString
-      # Commented out for Render deployment (use external services if needed)
-      # - key: GRAYLOG_HOST
-      #   sync: false
-      # - key: GRAYLOG_PORT
-      #   sync: false
-      # - key: ELASTICSEARCH_URL
-      #   sync: false
-      # - key: MONGODB_URI
-      #   sync: false
+      
+      # Add the same secure environment variables
+      - key: SECRET_KEY
+        sync: false
+      - key: CLOUD_NAME
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_SECRET
+        sync: false
+      - key: POSTGRES_DB
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_PORT
+        value: "587"
+      - key: GRAYLOG_HOST
+        sync: false
+      - key: GRAYLOG_PORT
+        value: "12201"
 
   # Celery Beat
   - type: worker
@@ -117,29 +172,80 @@ services:
           type: redis
           name: coffee-redis
           property: connectionString
-      # Commented out for Render deployment (use external services if needed)
-      # - key: GRAYLOG_HOST
-      #   sync: false
-      # - key: GRAYLOG_PORT
-      #   sync: false
-      # - key: ELASTICSEARCH_URL
-      #   sync: false
-      # - key: MONGODB_URI
-      #   sync: false
+      
+      # Add the same secure environment variables
+      - key: SECRET_KEY
+        sync: false
+      - key: CLOUD_NAME
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_SECRET
+        sync: false
+      - key: POSTGRES_DB
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_PORT
+        value: "587"
+      - key: GRAYLOG_HOST
+        sync: false
+      - key: GRAYLOG_PORT
+        value: "12201"
 
   # Flower (Celery Monitoring)
   - type: web
     name: coffee-flower
     env: python
-    plan: starter
-    buildCommand: pip install flower
-    startCommand: flower --broker=$(REDIS_URL) --port=5555
+    plan: standard
+    buildCommand: |
+      pip install uv
+      uv sync --no-install-project --frozen
+    startCommand: uv run celery -A coffee_api flower --port=$PORT
     envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: coffee_api.settings
+      - key: DATABASE_URL
+        sync: false
       - key: REDIS_URL
         fromService:
           type: redis
           name: coffee-redis
           property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: coffee-redis
+          property: connectionString
+      
+      # Add the same secure environment variables
+      - key: SECRET_KEY
+        sync: false
+      - key: CLOUD_NAME
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_SECRET
+        sync: false
 
 redis:
   - name: coffee-redis
