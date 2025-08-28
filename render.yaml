@@ -5,11 +5,12 @@ services:
     env: python
     plan: standard
     buildCommand: |
+      cd backend
       pip install uv
       uv sync --no-install-project --frozen
       uv run python manage.py collectstatic --noinput
       uv run python manage.py migrate --noinput
-    startCommand: uv run gunicorn coffee_api.wsgi:application --bind 0.0.0.0:10000
+    startCommand: cd backend && uv run gunicorn coffee_api.wsgi:application --bind 0.0.0.0:10000
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: coffee_api.settings
@@ -46,6 +47,8 @@ services:
         sync: false
       - key: API_SECRET
         sync: false
+      - key: CLOUDINARY_URL
+        sync: false  # Alternative format: cloudinary://API_KEY:API_SECRET@CLOUD_NAME
       
       # Database configuration - SECURE (set in dashboard)
       - key: POSTGRES_DB
@@ -85,9 +88,10 @@ services:
     env: python
     plan: standard
     buildCommand: |
+      cd backend
       pip install uv
       uv sync --no-install-project --frozen
-    startCommand: uv run celery -A coffee_api worker --loglevel=info
+    startCommand: cd backend && uv run celery -A coffee_api worker --loglevel=info
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: coffee_api.settings
@@ -117,6 +121,8 @@ services:
       - key: API_KEY
         sync: false
       - key: API_SECRET
+        sync: false
+      - key: CLOUDINARY_URL
         sync: false
       - key: POSTGRES_DB
         sync: false
@@ -149,9 +155,10 @@ services:
     env: python
     plan: standard
     buildCommand: |
+      cd backend
       pip install uv
       uv sync --no-install-project --frozen
-    startCommand: uv run celery -A coffee_api beat --loglevel=info
+    startCommand: cd backend && uv run celery -A coffee_api beat --loglevel=info
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: coffee_api.settings
@@ -181,6 +188,8 @@ services:
       - key: API_KEY
         sync: false
       - key: API_SECRET
+        sync: false
+      - key: CLOUDINARY_URL
         sync: false
       - key: POSTGRES_DB
         sync: false
@@ -213,9 +222,10 @@ services:
     env: python
     plan: standard
     buildCommand: |
+      cd backend
       pip install uv
       uv sync --no-install-project --frozen
-    startCommand: uv run celery -A coffee_api flower --port=$PORT
+    startCommand: cd backend && uv run celery -A coffee_api flower --port=$PORT
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: coffee_api.settings
@@ -245,6 +255,8 @@ services:
       - key: API_KEY
         sync: false
       - key: API_SECRET
+        sync: false
+      - key: CLOUDINARY_URL
         sync: false
 
 redis:

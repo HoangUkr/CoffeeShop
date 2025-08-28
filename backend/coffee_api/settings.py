@@ -14,6 +14,9 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Import logging configuration
 from .logging_config import setup_logging
@@ -306,13 +309,35 @@ CLOUDINARY_API_SECRET = os.getenv('API_SECRET') or os.getenv('CLOUDINARY_API_SEC
 
 # Only configure Cloudinary if all credentials are provided
 if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
+    # Configure cloudinary
+    try:
+        cloudinary.config(
+            cloud_name=CLOUDINARY_CLOUD_NAME,
+            api_key=CLOUDINARY_API_KEY,
+            api_secret=CLOUDINARY_API_SECRET,
+            secure=True
+        )
+    except NameError:
+        # cloudinary not installed, skip configuration
+        pass
+    
+    # CLOUDINARY_STORAGE dictionary (required by django-cloudinary-storage)
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
         'API_KEY': CLOUDINARY_API_KEY,
         'API_SECRET': CLOUDINARY_API_SECRET
     }
+    
+    # CLOUDINARY_URL format (alternative configuration method)
+    CLOUDINARY_URL = f"cloudinary://{CLOUDINARY_API_KEY}:{CLOUDINARY_API_SECRET}@{CLOUDINARY_CLOUD_NAME}"
+    
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     print("✅ Cloudinary configuration loaded successfully")
+    
+    # Debug logging for environment variables
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(f"Cloudinary configured with cloud_name: {CLOUDINARY_CLOUD_NAME}")
 else:
     # Use local file storage if Cloudinary is not configured
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
@@ -320,6 +345,16 @@ else:
     print(f"   CLOUD_NAME: {'✓' if CLOUDINARY_CLOUD_NAME else '✗'}")
     print(f"   API_KEY: {'✓' if CLOUDINARY_API_KEY else '✗'}")
     print(f"   API_SECRET: {'✓' if CLOUDINARY_API_SECRET else '✗'}")
+    
+    # Debug logging for missing environment variables
+    import logging
+    logger = logging.getLogger(__name__)
+    if not CLOUDINARY_CLOUD_NAME:
+        logger.warning("CLOUD_NAME environment variable not set")
+    if not CLOUDINARY_API_KEY:
+        logger.warning("API_KEY environment variable not set")
+    if not CLOUDINARY_API_SECRET:
+        logger.warning("API_SECRET environment variable not set")
 
 # Static files settings
 STATIC_URL = 'static/'
