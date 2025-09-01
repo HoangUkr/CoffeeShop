@@ -3,10 +3,10 @@ from celery import Celery
 
 os.environ.setdefault(
     'DJANGO_SETTINGS_MODULE', 
-    'backend.settings'
+    'coffee_api.settings'
 )
 
-app = Celery('backend')
+app = Celery('coffee_api')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
