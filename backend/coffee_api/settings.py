@@ -256,7 +256,7 @@ else:
                 'HOST': os.getenv('POSTGRES_HOST'),
                 'PORT': os.getenv('POSTGRES_PORT', '5432'),
                 'OPTIONS': {
-                    'sslmode': 'require',  # Required for most cloud databases
+                    'sslmode': 'disable',  # Required for most cloud databases
                     'connect_timeout': 60,
                 },
                 'CONN_MAX_AGE': 600,  # Connection pooling
