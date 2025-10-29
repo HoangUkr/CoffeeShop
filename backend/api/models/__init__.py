@@ -7,3 +7,4 @@ from .Images import Images
 from .Order import Order
 from .OrderItem import OrderItem
 from .CustomUser import CustomUser
+from .Cart import Cart

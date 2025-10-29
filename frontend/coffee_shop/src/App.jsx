@@ -20,7 +20,7 @@ import ProductFormPage from "./pages/ProductFormPage";
 function App() {
   return (
     <Router>
-      <div className="text-base sm:text-lg text-white min-h-screen">
+      <div className="text-base sm:text-lg text-white min-h-screen overflow-x-hidden">
       <Navigation></Navigation>
       <main>
         <Routes>

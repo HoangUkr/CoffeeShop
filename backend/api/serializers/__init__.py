@@ -7,3 +7,5 @@ from .ProductSerializer import ProductSerializer
 from .OrderItemSerializer import OrderItemSerializer
 from .OrderSerializer import OrderSerializer
 from .CustomUserSerializer import CustomUserSerializer
+from .CartSerializer import CartSerializer
+from .CartItemSerializer import CartItemSerializer
