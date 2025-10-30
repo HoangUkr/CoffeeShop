@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 # Import task
-from api.tasks import send_reservation_confirmation
+from api.tasks.email_task import send_email_confirmation
 
 # Import loguru (already configured to send to Graylog)
 from loguru import logger

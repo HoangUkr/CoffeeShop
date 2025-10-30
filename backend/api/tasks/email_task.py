@@ -1,12 +1,19 @@
 from django.conf import settings
-from django.core.mail import send_mail
-from coffee_api import celery_app
+from django.core.mail import send_mail, BadHeaderError
+from celery import shared_task
 
 # Import loguru (already configured to send to Graylog)
 from loguru import logger
 
-@celery_app.task
-def send_reservation_confirmation(
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_jitter=True,
+    max_retries=5
+)
+def send_email_confirmation(
+    self,
     subject,
     message,
     recipient_list,
@@ -38,7 +45,10 @@ def send_reservation_confirmation(
         
         # Only return success message, no logging for successful operations
         return f"Email sent successfully to {', '.join(recipient_list)}"
-        
+    except BadHeaderError as bhe:
+        error_msg = f"❌ Invalid header found when sending email to {', '.join(recipient_list)}: {str(bhe)}"
+        logger.error(error_msg)
+        raise self.retry(exc=bhe, countdown=10)
     except Exception as e:
         # Log detailed error information for debugging
         error_msg = f"❌ Failed to send email to {', '.join(recipient_list)}: {str(e)}"
@@ -50,4 +60,4 @@ def send_reservation_confirmation(
         import traceback
         logger.error(f"❌ Full traceback: {traceback.format_exc()}")
         
-        return error_msg
+        raise self.retry(exc=e, countdown=10)

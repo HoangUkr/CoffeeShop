@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',  # For JWT token blacklisting
     'corsheaders',  # For handling CORS,
     'celery',   # For asynchronous task processing
+    'django_celery_beat',  # For periodic tasks with Celery
 ]
 
 # Add Cloudinary apps only if configured
@@ -192,6 +193,11 @@ SECURE_HSTS_PRELOAD = True
 SESSION_COOKIE_SECURE = not DEBUG  # Use HTTPS in production
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 2*60*60    # 2 hours
+SESSION_SAVE_EVERY_REQUEST = True  # Extend session on activity
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'  # Use cached DB sessions
+
+
 CSRF_COOKIE_SECURE = not DEBUG  # Use HTTPS in production
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
