@@ -8,7 +8,7 @@ from api.models import Cart, CartItem, Product
 from api.serializers import CartSerializer, CartItemSerializer
 
 def get_or_create_cart(request):
-    session_key = requst.session.session_key
+    session_key = request.session.session_key
     if not session_key:
         request.session.create()
         session_key = request.session.session_key

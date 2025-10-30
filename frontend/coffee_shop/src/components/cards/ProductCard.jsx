@@ -1,6 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import { Transition } from "@headlessui/react";
 import { useNavigate } from "react-router-dom"; 
+
+import { useCart } from "../../hooks/useCart";
 
 /* Icon */
 import {
@@ -11,6 +13,20 @@ import {
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate(); // Navigation hook
+  const { addToCart, loading } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAddToCart = async () => {
+    setIsAdding(true);
+    const result = await addToCart(product, 1);
+    if (result.success) {
+      console.log("Product added to cart:", result.item);
+    }
+    else{
+      console.error("Failed to add product to cart:", result.error);
+    }
+    setIsAdding(false);
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 items-center">
@@ -45,8 +61,14 @@ const ProductCard = ({ product }) => {
             type="button"
             className="p-2 bg-yellow-500 hover:bg-yellow-600 text-[#4B2E2E] rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-400"
             aria-label="Add to Cart"
+            onClick={handleAddToCart}
+            disabled={isAdding || loading}
           >
-            <ShoppingCartIcon className="h-5 w-5" />
+            { isAdding ? (
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#4B2E2E] border-t-transparent"></div>
+            ):
+              (<ShoppingCartIcon className="h-5 w-5" />
+            )}
           </button>
           <button
             type="button"

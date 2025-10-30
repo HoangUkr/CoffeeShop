@@ -17,9 +17,12 @@ import OrderPage from "./pages/OrderPage";
 import CategoryFormPage from "./pages/CategoryFormPage";
 import ProductFormPage from "./pages/ProductFormPage";
 
+import { CartProvider } from "./hooks/useCart";
+
 function App() {
   return (
-    <Router>
+    <CartProvider>
+      <Router>
       <div className="text-base sm:text-lg text-white min-h-screen overflow-x-hidden">
       <Navigation></Navigation>
       <main>
@@ -39,6 +42,7 @@ function App() {
       <Footer></Footer>
     </div>
     </Router>
+    </CartProvider>
   );
 }
 

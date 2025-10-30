@@ -11,7 +11,8 @@ from api.views import (
     OrderCreateView, OrderDeleteView, OrderListView, OrderModifyView,
     CustomUserModifyView, CustomUserCreateView, CustomUserDeleteView, CustomUserListView,
     ReservationCreateView, ReservationListView, ReservationDeleteView, ReservationModifyView,
-    Home
+    Home,
+    CartView, CartItemAddView, CartItemUpdateView, CartItemDeleteView
 )
 
 urlpatterns = [
@@ -66,4 +67,10 @@ urlpatterns = [
     
     # Homepage for main api
     path('v1/', Home.as_view(), name='home'),
+    
+    # Url for cart
+    path('api/cart/', CartView.as_view(), name='cart-detail'),
+    path('api/cart/items/add/', CartItemAddView.as_view(), name='cart-item-add'),
+    path('api/cart/items/<int:pk>/update/', CartItemUpdateView.as_view(), name='cart-item-update'),
+    path('api/cart/items/<int:pk>/delete/', CartItemDeleteView.as_view(), name='cart-item-delete'),
 ]

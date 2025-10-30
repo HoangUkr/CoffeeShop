@@ -9,7 +9,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+
+
 import { useAdmin } from "../hooks/useAdmin";
+import { useCart } from "../hooks/useCart";
 
 // Navigation items
 const navigation = [
@@ -29,6 +32,9 @@ const Navbar = () => {
 
   // Admin authentication hook
   const { isAuthenticated, user, logout, loadingStates } = useAdmin();
+
+  // Cart hook
+  const { cartCount } = useCart();
 
   // State of menu dropdown
   const [menuOpen, setMenuOpen] = useState(false);
@@ -123,19 +129,26 @@ const Navbar = () => {
 
                 {/* Right: Cart + Profile */}
                 <div className="flex items-center space-x-4">
-                  <button
-                    type="button"
-                    className="rounded-full p-2 bg-[#4B2E2E] hover:bg-[#3E2626] focus:ring-2 focus:ring-white focus:outline-none"
-                    onClick={() => {
-                      // Handle cart click
-                      navigate("/cart");
-                    }}
-                  >
-                    <ShoppingCartIcon
-                      className="h-6 w-6 text-white"
-                      aria-hidden="true"
-                    />
-                  </button>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="rounded-full p-2 bg-[#4B2E2E] hover:bg-[#3E2626] focus:ring-2 focus:ring-white focus:outline-none"
+                      onClick={() => {
+                        // Handle cart click
+                        navigate("/cart");
+                      }}
+                    >
+                      <ShoppingCartIcon
+                        className="h-6 w-6 text-white"
+                        aria-hidden="true"
+                      />
+                    </button>
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-[#4B2E2E] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {cartCount > 99 ? '99+' : cartCount}
+                      </span>
+                    )}
+                  </div>
 
                   <Menu as="div" className="relative">
                     <Menu.Button className="flex rounded-full bg-[#4B2E2E] p-1 focus:outline-none focus:ring-2 focus:ring-white">
