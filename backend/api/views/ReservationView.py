@@ -46,7 +46,7 @@ class ReservationCreateView(APIView):
                 subject = f"✅ Reservation Confirmation - {reservation.reservation_date.strftime('%B %d, %Y at %I:%M %p')}"
 
                 # Send email asynchronously using Celery
-                task = send_reservation_confirmation.delay(
+                task = send_email_confirmation.delay(
                     subject=subject,
                     message="",  # Empty plain text since we're using HTML
                     recipient_list=[reservation.customer_email],
