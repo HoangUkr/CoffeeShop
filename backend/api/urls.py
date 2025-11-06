@@ -69,8 +69,8 @@ urlpatterns = [
     path('v1/', Home.as_view(), name='home'),
     
     # Url for cart
-    path('api/cart/', CartView.as_view(), name='cart-detail'),
-    path('api/cart/items/add/', CartItemAddView.as_view(), name='cart-item-add'),
-    path('api/cart/items/<int:pk>/update/', CartItemUpdateView.as_view(), name='cart-item-update'),
-    path('api/cart/items/<int:pk>/delete/', CartItemDeleteView.as_view(), name='cart-item-delete'),
+    path('v1/cart/', CartView.as_view(), name='cart-detail'),
+    path('v1/cart/items/add/', CartItemAddView.as_view(), name='cart-item-add'),
+    path('v1/cart/items/<int:pk>/update/', CartItemUpdateView.as_view(), name='cart-item-update'),
+    path('v1/cart/items/<int:pk>/delete/', CartItemDeleteView.as_view(), name='cart-item-delete'),
 ]

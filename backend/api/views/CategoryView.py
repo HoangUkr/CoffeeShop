@@ -18,6 +18,15 @@ class CategoryCreateView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUserRole]
     
     def post(self, request, *args, **kwargs):
+        # Debug information
+        print(f"🔍 User: {request.user}")
+        print(f"🔍 User authenticated: {request.user.is_authenticated}")
+        print(f"🔍 User role: {getattr(request.user, 'role', 'No role attr')}")
+        print(f"🔍 User is_superuser: {getattr(request.user, 'is_superuser', 'No superuser attr')}")
+        print(f"🔍 Auth header: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
+        print(f"🔍 Session key: {request.session.session_key}")
+        print(f"🔍 CSRF token: {request.META.get('HTTP_X_CSRFTOKEN', 'No CSRF token')}")
+        
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

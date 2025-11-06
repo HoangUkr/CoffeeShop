@@ -18,14 +18,22 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = async () => {
     setIsAdding(true);
-    const result = await addToCart(product, 1);
-    if (result.success) {
-      console.log("Product added to cart:", result.item);
+    try {
+      console.log("🛒 Adding product to cart:", product);
+      const result = await addToCart(product, 1);
+      console.log("🛒 AddToCart result:", result);
+      
+      // Safety check for undefined result
+      if (result && result.success) {
+        console.log("✅ Product added to cart successfully:", result.item);
+      } else {
+        console.error("❌ Failed to add product to cart:", result?.error || "Unknown error");
+      }
+    } catch (error) {
+      console.error("💥 Unexpected error in handleAddToCart:", error);
+    } finally {
+      setIsAdding(false);
     }
-    else{
-      console.error("Failed to add product to cart:", result.error);
-    }
-    setIsAdding(false);
   };
 
   return (

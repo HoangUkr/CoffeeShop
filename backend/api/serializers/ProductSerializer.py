@@ -12,21 +12,17 @@ class ProductSerializer(serializers.ModelSerializer):
         help_text="The price of the product.",
         required=True
     )
-    # Allow set the category during creation
+    # Allow setting the category during creation by ID
+    category_id = serializers.IntegerField(write_only=True, required=True)
+    # For reading, return the full category details
     category = CategorySerializer(read_only=True)
-    # category_name = serializers.CharField(
-    #     source='category.category_name',
-    #     read_only=True,
-    #     help_text="The name of the category this product belongs to."
-    # )
     # Product with image
     images = ImageSerializer(many=True, read_only=True)
-    # category_id = serializers.IntegerField(source='category.id', read_only=True)
+    
     class Meta:
         model = Product
         read_only_fields = [
             'id',
-            'category_name',
             'product_like_count',
             'created_at',
             'updated_at'
@@ -34,13 +30,36 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'product_name',
-            # 'category_name',
             'thumbnail',
             'product_price',
             'product_like_count',
             'product_description',
-            'category',
+            'category_id',  # For writing
+            'category',     # For reading
             'images',
             'created_at',
             'updated_at'
         ]
+    
+    def create(self, validated_data):
+        # Extract category_id and get the category instance
+        category_id = validated_data.pop('category_id')
+        try:
+            category = Category.objects.get(id=category_id)
+            validated_data['category'] = category
+        except Category.DoesNotExist:
+            raise serializers.ValidationError({'category_id': 'Category with this ID does not exist.'})
+        
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        # Handle category_id if provided
+        if 'category_id' in validated_data:
+            category_id = validated_data.pop('category_id')
+            try:
+                category = Category.objects.get(id=category_id)
+                validated_data['category'] = category
+            except Category.DoesNotExist:
+                raise serializers.ValidationError({'category_id': 'Category with this ID does not exist.'})
+        
+        return super().update(instance, validated_data)

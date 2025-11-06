@@ -42,7 +42,7 @@ class Product(models.Model):
         verbose_name='Created Date of Product'
     )
     updated_at = models.DateTimeField(
-        auto_now_add=True,
+        auto_now=True,
         verbose_name='Updated Date of Product'
     )
     

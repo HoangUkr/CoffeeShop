@@ -1,23 +1,25 @@
-import api from "../api/axiosInstance";
+import api, { authenticatedApi } from "../api/axiosInstance";
 
-// Fetch categories with optional filters
+// Fetch categories with optional filters (public endpoint)
 export const fetchCategoriesService = (filters) => {
   return api.get("v1/categories/", { params: filters });
 };
 
+// Create category (requires authentication)
 export const createCategoryService = (data) => {
-  
-  return api.post("v1/categories/create/", data, {
+  return authenticatedApi.post("v1/categories/create/", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
 
+// Update category (requires authentication)
 export const updateCategoryService = (id, data) => {
-  return api.put(`v1/categories/${id}/`, data);
+  return authenticatedApi.put(`v1/categories/${id}/`, data);
 };
 
+// Delete category (requires authentication)
 export const deleteCategoryService = (id) => {
-  return api.delete(`v1/categories/${id}/`);
+  return authenticatedApi.delete(`v1/categories/${id}/`);
 };

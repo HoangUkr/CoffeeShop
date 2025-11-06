@@ -15,25 +15,73 @@ const CategoryForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     
     if (loading) return; // Prevent multiple submissions while loading
-    e.preventDefault();
+    
     try {
-      await createCategory(form);
+      const result = await createCategory(form);
+      
+      if (!result.success) {
+        console.error("Error creating category:", result.error);
+        
+        // Handle different types of errors
+        let errorMessage = "There was an error creating the category.";
+        const error = result.error;
+        
+        if (error?.response) {
+          // Server responded with error status
+          const status = error.response.status;
+          const data = error.response.data;
+          
+          if (status === 401) {
+            errorMessage = "Unauthorized. Please login as admin to create categories.";
+          } else if (status === 403) {
+            errorMessage = "Forbidden. You don't have permission to create categories.";
+          } else if (status === 400) {
+            // Validation errors
+            if (data.category_name) {
+              errorMessage = `Category name: ${data.category_name.join(", ")}`;
+            } else if (data.non_field_errors) {
+              errorMessage = data.non_field_errors.join(", ");
+            } else {
+              errorMessage = "Invalid data provided.";
+            }
+          } else if (status >= 500) {
+            errorMessage = "Server error. Please try again later.";
+          } else {
+            errorMessage = data.detail || data.message || errorMessage;
+          }
+        } else if (error?.request) {
+          // Network error
+          errorMessage = "Network error. Please check your connection.";
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
+        
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: errorMessage,
+        });
+        return;
+      }
+      
+      // Success case
       setForm({ category_name: "" }); // Reset the form after submission
       Swal.fire({
         icon: "success",
         title: "Category Created",
         text: "Your category has been created successfully.",
       });
+      
     } catch (error) {
-      console.error("Error creating category:", error);
+      console.error("Unexpected error:", error);
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "There was an error creating the category.",
+        title: "Unexpected Error",
+        text: "An unexpected error occurred. Please try again.",
       });
-      return;
     }
   };
   return (

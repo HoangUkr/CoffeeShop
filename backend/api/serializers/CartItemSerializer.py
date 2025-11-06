@@ -9,7 +9,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         source='product',
         write_only=True
     )
-    quantity = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
     
     class Meta:
         model = CartItem

@@ -60,16 +60,30 @@ class ProductCreateView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUserRole]
 
     def post(self, request):
+        # Debug information
+        print(f"🔍 Product creation request data: {request.data}")
+        print(f"🔍 Files: {request.FILES}")
+        print(f"🔍 User: {request.user}")
+        
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
-            product = serializer.save()
-            
-            # Add image handling
-            images = request.FILES.getlist('images')
-            Images.objects.bulk_create([
-                Images(product=product, image=image) for image in images
-            ])
-            return Response(ProductSerializer(product).data, status=status.HTTP_201_CREATED)
+            try:
+                product = serializer.save()
+                
+                # Add image handling
+                images = request.FILES.getlist('images')
+                if images:
+                    Images.objects.bulk_create([
+                        Images(product=product, image=image) for image in images
+                    ])
+                return Response(ProductSerializer(product).data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                print(f"❌ Error creating product: {str(e)}")
+                import traceback
+                print(f"❌ Full traceback: {traceback.format_exc()}")
+                return Response({'error': 'Internal server error occurred while creating product.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            print(f"❌ Serializer errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

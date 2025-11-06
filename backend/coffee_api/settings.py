@@ -199,8 +199,13 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'  # Use cached DB s
 
 
 CSRF_COOKIE_SECURE = not DEBUG  # Use HTTPS in production
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access to CSRF cookie
 CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://frontend:3000",
+]
 
 ROOT_URLCONF = 'coffee_api.urls'
 

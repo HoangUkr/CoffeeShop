@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import api from "../api/axiosInstance";
+import { useState, useEffect, useMemo, useRef } from "react";
+import api, { authenticatedApi } from "../api/axiosInstance";
 
 // Import service funtions
 import {
@@ -9,28 +9,130 @@ import {
   deleteProductService,
 } from "../services/productService";
 
+// Global cache to prevent duplicate requests
+const requestCache = new Map();
+const pendingRequests = new Map();
+
 export default function useProducts(filters) {
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const mountedRef = useRef(true);
+
+  // Memoize filters to prevent unnecessary re-renders
+  const memoizedFilters = useMemo(() => {
+    return filters || {};
+  }, [filters]);
+
+  // Create a cache key based on filters
+  const cacheKey = useMemo(() => {
+    const filterKeys = Object.keys(memoizedFilters).sort();
+    return filterKeys.length > 0 ? JSON.stringify(memoizedFilters) : 'no-filters';
+  }, [memoizedFilters]);
 
   useEffect(() => {
     const getProducts = async () => {
-      setLoading(true);
+      // Check if request is already pending
+      if (pendingRequests.has(cacheKey)) {
+        const existingRequest = pendingRequests.get(cacheKey);
+        try {
+          const result = await existingRequest;
+          if (mountedRef.current) {
+            setProducts(result);
+            setError(null);
+          }
+        } catch (err) {
+          if (mountedRef.current) {
+            console.error("Error fetching products from pending request:", err);
+            if (err.response?.status === 429) {
+              setError("Too many requests. Please wait a moment before trying again.");
+            } else {
+              const errorMessage = err.response?.data?.detail || err.response?.data?.error || err.message || 'Failed to fetch products';
+              setError(errorMessage);
+            }
+          }
+        } finally {
+          if (mountedRef.current) {
+            setLoading(false);
+          }
+        }
+        return;
+      }
+
+      // Check cache first
+      if (requestCache.has(cacheKey)) {
+        const cachedData = requestCache.get(cacheKey);
+        if (Date.now() - cachedData.timestamp < 30000) { // Cache for 30 seconds
+          if (mountedRef.current) {
+            setProducts(cachedData.data);
+            setError(null);
+            setLoading(false);
+          }
+          return;
+        } else {
+          requestCache.delete(cacheKey); // Remove expired cache
+        }
+      }
+
+      if (mountedRef.current) {
+        setLoading(true);
+      }
+
+      // Create new request and store it
+      const requestPromise = fetchProductService(Object.keys(memoizedFilters).length > 0 ? memoizedFilters : undefined)
+        .then(response => {
+          const data = response.data;
+          // Cache the result
+          requestCache.set(cacheKey, {
+            data: data,
+            timestamp: Date.now()
+          });
+          return data;
+        });
+
+      pendingRequests.set(cacheKey, requestPromise);
+
       try {
-        const response = await fetchProductService(filters);
-        setProducts(response.data);
+        const data = await requestPromise;
+        if (mountedRef.current) {
+          setProducts(data);
+          setError(null);
+        }
       } catch (err) {
-        setError(err);
+        if (mountedRef.current) {
+          console.error("Error fetching products:", err);
+          if (err.response?.status === 429) {
+            setError("Too many requests. Please wait a moment before trying again.");
+          } else {
+            const errorMessage = err.response?.data?.detail || err.response?.data?.error || err.message || 'Failed to fetch products';
+            setError(errorMessage);
+          }
+        }
       } finally {
-        setLoading(false);
+        pendingRequests.delete(cacheKey);
+        if (mountedRef.current) {
+          setLoading(false);
+        }
       }
     };
-    if (filters !== undefined) {
+    
+    // Add a small delay to prevent rapid API calls
+    const timeoutId = setTimeout(() => {
       getProducts();
-    }
-  }, [filters]);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [cacheKey, memoizedFilters]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Function to get category id by product id
   const getCategoryId = async (productId) => {
@@ -57,7 +159,9 @@ export default function useProducts(filters) {
         throw new Error("Product not found");
       }
     } catch (error) {
-      setError(error);
+      console.error("Error fetching product by ID:", error);
+      const errorMessage = error.response?.data?.detail || error.response?.data?.error || error.message || 'Failed to fetch product';
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
@@ -68,6 +172,7 @@ export default function useProducts(filters) {
   const createProduct = async (data) => {
     setLoading(true);
     setError(null);
+    
     try {
       let formData;
       if (data instanceof FormData) {
@@ -77,7 +182,7 @@ export default function useProducts(filters) {
         formData.append("product_name", data.product_name);
         formData.append("product_price", data.product_price);
         formData.append("product_like_count", data.product_like_count);
-        formData.append("category", data.category);
+        formData.append("category_id", data.category);
         if (data.thumbnail) {
           formData.append("thumbnail", data.thumbnail);
         }
@@ -87,11 +192,24 @@ export default function useProducts(filters) {
           });
         }
       }
+      
       const response = await createProductService(formData);
-      setProducts((prev) => [...prev, response.data]);
+      
+      // Check if response is successful
+      if (response.status === 201 || response.status === 200) {
+        setProducts((prev) => [...prev, response.data]);
+        return { success: true, data: response.data };
+      } else {
+        const errorMsg = `Unexpected status: ${response.status}`;
+        setError(new Error(errorMsg));
+        return { success: false, error: errorMsg };
+      }
+      
     } catch (err) {
-      setError(err);
-      throw err; // Re-throw to handle it in the component if needed
+      console.error("CreateProduct error:", err);
+      const errorMessage = err.response?.data?.detail || err.response?.data?.error || err.message || 'Failed to create product';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }

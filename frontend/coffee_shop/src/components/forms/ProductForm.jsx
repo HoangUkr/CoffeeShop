@@ -48,13 +48,15 @@ const ProductForm = ({ initial = initialData, onSubmit }) => {
   };
 
   const handleSubmit = async (e) => {
-    
     e.preventDefault();
+    
+    if (productLoading) return; // Prevent multiple submissions while loading
+    
     let formDataToSubmit = new FormData();
     formDataToSubmit.append("product_name", formData.productName);
     formDataToSubmit.append("product_price", formData.productPrice);
     formDataToSubmit.append("product_like_count", formData.productLikeCount);
-    formDataToSubmit.append("category", formData.productCategory);
+    formDataToSubmit.append("category_id", formData.productCategory);
     if (formData.productThumbnail) {
       formDataToSubmit.append("thumbnail", formData.productThumbnail);
     }
@@ -65,7 +67,59 @@ const ProductForm = ({ initial = initialData, onSubmit }) => {
     }
 
     try {
-      await createProduct(formDataToSubmit);
+      const result = await createProduct(formDataToSubmit);
+      
+      if (!result.success) {
+        console.error("Error creating product:", result.error);
+        
+        // Handle different types of errors
+        let errorMessage = "There was an error creating the product.";
+        const error = result.error;
+        
+        if (error?.response) {
+          // Server responded with error status
+          const status = error.response.status;
+          const data = error.response.data;
+          
+          if (status === 401) {
+            errorMessage = "Unauthorized. Please login as admin to create products.";
+          } else if (status === 403) {
+            errorMessage = "Forbidden. You don't have permission to create products.";
+          } else if (status === 400) {
+            // Validation errors
+            const validationErrors = [];
+            if (data.product_name) validationErrors.push(`Product name: ${data.product_name.join(", ")}`);
+            if (data.product_price) validationErrors.push(`Product price: ${data.product_price.join(", ")}`);
+            if (data.category) validationErrors.push(`Category: ${data.category.join(", ")}`);
+            if (data.thumbnail) validationErrors.push(`Thumbnail: ${data.thumbnail.join(", ")}`);
+            if (data.non_field_errors) validationErrors.push(data.non_field_errors.join(", "));
+            
+            if (validationErrors.length > 0) {
+              errorMessage = validationErrors.join(". ");
+            } else {
+              errorMessage = "Invalid data provided.";
+            }
+          } else if (status >= 500) {
+            errorMessage = "Server error. Please try again later.";
+          } else {
+            errorMessage = data.detail || data.message || errorMessage;
+          }
+        } else if (error?.request) {
+          // Network error
+          errorMessage = "Network error. Please check your connection.";
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
+        
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: errorMessage,
+        });
+        return;
+      }
+      
+      // Success case
       if (onSubmit) {
         onSubmit();
       }
@@ -77,14 +131,14 @@ const ProductForm = ({ initial = initialData, onSubmit }) => {
         title: "Product Created",
         text: "Your product has been created successfully.",
       });
+      
     } catch (error) {
-      console.error("Error creating product:", error);
+      console.error("Unexpected error:", error);
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "There was an error creating the product.",
+        title: "Unexpected Error",
+        text: "An unexpected error occurred. Please try again.",
       });
-      return;
     }
   };
   return (
